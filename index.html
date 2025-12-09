@@ -51,16 +51,15 @@
       padding: 0 1.5rem;
     }
 
-    /* ヘッダー */
-    header {
-      background: rgba(255, 255, 255, 0.96);
-      color: #111827;
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      border-bottom: 1px solid #d1d5db;
-    }
+header {
+  background: #696969;        /* ← ここだけ変更 */
+  color: #e5e7eb;
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid #4b5563;  /* 少し柔らかいグレーのラインに */
+}
 
     .header-inner {
       display: flex;
@@ -87,17 +86,16 @@
 
     nav a {
       opacity: 0.9;
-      color: #4b5563;
+      color: #e5e7eb;
     }
 
     nav a:hover {
       opacity: 1;
       text-decoration: none;
-      border-bottom: 2px solid #0ea5e9;
+      border-bottom: 2px solid #38bdf8;
       padding-bottom: 0.12rem;
     }
 
-    /* セクション共通 */
     section {
       padding: 3.5rem 0 3rem;
     }
@@ -149,7 +147,6 @@
       color: #6b7280;
     }
 
-    /* 成分表示セクション */
     .hero {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -208,7 +205,6 @@
       color: #111827;
     }
 
-    /* カード共通 */
     .card {
       background: #ffffff;
       border-radius: 16px;
@@ -224,7 +220,6 @@
       box-shadow: 0 22px 55px rgba(15, 23, 42, 0.13);
     }
 
-    /* 成分構成 */
     .chart-layout {
       display: grid;
       grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
@@ -269,7 +264,6 @@
       background: #f9fafb;
     }
 
-    /* 成分一覧トグル */
     .list-toggle {
       width: 100%;
       display: flex;
@@ -303,7 +297,6 @@
       margin-top: 0.6rem;
     }
 
-    /* 成分一覧 業種カラー＆リンク */
     .career-link {
       color: inherit;
       text-decoration: none;
@@ -325,7 +318,6 @@
       flex-shrink: 0;
     }
 
-    /* 成分詳細 */
     .timeline {
       display: flex;
       flex-direction: column;
@@ -366,63 +358,63 @@
       border-color: rgba(56, 189, 248, 0.45);
     }
     .timeline-item-food::before {
-      background: linear-gradient(90deg, #38bdf8, rgba(56, 189, 248, 0));
+      background: linear-gradient(90deg, #36aee4, rgba(54, 174, 228, 0));
     }
 
     .timeline-item-system {
       border-color: rgba(168, 85, 247, 0.45);
     }
     .timeline-item-system::before {
-      background: linear-gradient(90deg, #a855f7, rgba(168, 85, 247, 0));
+      background: linear-gradient(90deg, #9b4ae0, rgba(155, 74, 224, 0));
     }
 
     .timeline-item-store {
       border-color: rgba(249, 115, 22, 0.45);
     }
     .timeline-item-store::before {
-      background: linear-gradient(90deg, #f97316, rgba(249, 115, 22, 0));
+      background: linear-gradient(90deg, #f18324, rgba(241, 131, 36, 0));
     }
 
     .timeline-item-retail {
       border-color: rgba(34, 197, 94, 0.45);
     }
     .timeline-item-retail::before {
-      background: linear-gradient(90deg, #22c55e, rgba(34, 197, 94, 0));
+      background: linear-gradient(90deg, #1fa857, rgba(31, 168, 87, 0));
     }
 
     .timeline-item-finance {
       border-color: rgba(225, 29, 72, 0.45);
     }
     .timeline-item-finance::before {
-      background: linear-gradient(90deg, #e11d48, rgba(225, 29, 72, 0));
+      background: linear-gradient(90deg, #d81e4a, rgba(216, 30, 74, 0));
     }
 
     .timeline-item-wood {
       border-color: rgba(250, 204, 21, 0.55);
     }
     .timeline-item-wood::before {
-      background: linear-gradient(90deg, #facc15, rgba(250, 204, 21, 0));
+      background: linear-gradient(90deg, #e7b814, rgba(231, 184, 20, 0));
     }
 
     .timeline-item-light {
       border-color: rgba(14, 165, 233, 0.5);
     }
     .timeline-item-light::before {
-      background: linear-gradient(90deg, #0ea5e9, rgba(14, 165, 233, 0));
+      background: linear-gradient(90deg, #0d9ad8, rgba(13, 154, 216, 0));
     }
 
     .timeline-item-auto {
       border-color: rgba(139, 92, 246, 0.5);
     }
     .timeline-item-auto::before {
-      background: linear-gradient(90deg, #8b5cf6, rgba(139, 92, 246, 0));
+      background: linear-gradient(90deg, #7e54e0, rgba(126, 84, 224, 0));
     }
 
     .timeline-item-azen {
       border-color: rgba(249, 115, 115, 0.6);
     }
     .timeline-item-azen::before {
-      background: linear-gradient(90deg, #f97373, rgba(249, 115, 115, 0));
+      background: linear-gradient(90deg, #f26a6a, rgba(242, 106, 106, 0));
     }
 
     .timeline-period {
@@ -504,7 +496,6 @@
       border-radius: 4px;
     }
 
-    /* 製品セクション */
     .grid-products {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -584,7 +575,6 @@
       color: #111827;
     }
 
-    /* フェードイン */
     .fade-in-up {
       opacity: 0;
       transform: translateY(10px);
@@ -596,7 +586,6 @@
       transform: translateY(0);
     }
 
-    /* フッター（明るく統一） */
     footer {
       background: #e5e7eb;
       color: #4b5563;
@@ -606,7 +595,6 @@
       border-top: 1px solid #d1d5db;
     }
 
-    /* レスポンシブ */
     @media (max-width: 900px) {
       .chart-layout {
         grid-template-columns: minmax(0, 1fr);
@@ -664,19 +652,14 @@
       }
     }
 
-/* =========================
-   ヒーローまわりのメリハリ強化
-   （既存CSSの一番下にそのまま追加）
-   ========================= */
-
 #intro h1 {
-  font-size: 2.1rem;        /* ほんの少しだけ大きくして主役感を出す */
+  font-size: 2.1rem;
   letter-spacing: 0.04em;
 }
 
 #intro .hero-subtitle {
   font-size: 1.2rem;
-  font-weight: 500;         /* 少しだけ軽くして上品に */
+  font-weight: 500;
   color: #4b5563;
 }
 
@@ -688,13 +671,8 @@
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.10);
 }
 
-/* =========================
-   (2) アクセントカラーを少し落ち着かせる
-   （既存CSSの一番下にこのまま追加）
-   ========================= */
-
 h2 {
-  border-left: 4px solid #0284c7; /* すこし深いブルーに */
+  border-left: 4px solid #0284c7;
   background: linear-gradient(
     90deg,
     rgba(2, 132, 199, 0.08),
@@ -702,75 +680,34 @@ h2 {
   );
 }
 
-/* ナビゲーションのホバー下線も同じトーンにする */
 header nav a:hover {
   border-bottom-color: #0284c7;
 }
 
-/* タイムライン上部の細いライン（各業種の色味を少し落ち着かせる） */
-.timeline-item-food::before {
-  background: linear-gradient(90deg, #36aee4, rgba(54, 174, 228, 0));
-}
-.timeline-item-system::before {
-  background: linear-gradient(90deg, #9b4ae0, rgba(155, 74, 224, 0));
-}
-.timeline-item-store::before {
-  background: linear-gradient(90deg, #f18324, rgba(241, 131, 36, 0));
-}
-.timeline-item-retail::before {
-  background: linear-gradient(90deg, #1fa857, rgba(31, 168, 87, 0));
-}
-.timeline-item-finance::before {
-  background: linear-gradient(90deg, #d81e4a, rgba(216, 30, 74, 0));
-}
-.timeline-item-wood::before {
-  background: linear-gradient(90deg, #e7b814, rgba(231, 184, 20, 0));
-}
-.timeline-item-light::before {
-  background: linear-gradient(90deg, #0d9ad8, rgba(13, 154, 216, 0));
-}
-.timeline-item-auto::before {
-  background: linear-gradient(90deg, #7e54e0, rgba(126, 84, 224, 0));
-}
-.timeline-item-azen::before {
-  background: linear-gradient(90deg, #f26a6a, rgba(242, 106, 106, 0));
-}
-
-/* =========================
-   (3) カードの密度を少し上げてリッチに
-   （このブロックもそのまま一番下に追加）
-   ========================= */
-
 .card {
-  padding: 1.6rem 1.5rem 1.7rem;           /* ほんの少しだけ中身を詰める */
-  border-radius: 18px;                     /* 角を少し丸くして上品に */
+  padding: 1.6rem 1.5rem 1.7rem;
+  border-radius: 18px;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
 }
 
 .card h3 {
   font-size: 1.05rem;
-  letter-spacing: 0.04em;                  /* タイトルをきゅっと締める */
+  letter-spacing: 0.04em;
   margin-bottom: 0.7rem;
 }
 
-/* 製品セクションの本文は少しだけ細く・落ち着かせる */
 .product-card p {
   font-size: 0.9rem;
   line-height: 1.8;
 }
 
-/* タイムライン本文も少しだけ細くして読みやすく */
 .timeline-desc {
   font-size: 0.9rem;
   line-height: 1.85;
 }
 
-/* =========================
-   9業種＋日数まわりの見た目を角Rカードで統一
-   ========================= */
-
 #intro .hero-main {
-  max-width: 760px;       /* 横幅を少し絞って間延び感を減らす */
+  max-width: 760px;
   margin: 0 auto;
 }
 
@@ -778,11 +715,11 @@ header nav a:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1.1rem;     /* 少しだけ詰める */
+  margin-top: 1.1rem;
 }
 
 #intro .hero-stat {
-  border-radius: 12px;    /* 長丸 → 角の丸いカードに */
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid #d4d4d8;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
@@ -803,12 +740,8 @@ header nav a:hover {
   color: #111827;
 }
 
-/* =========================
-   成分表示セクションの詰め調整
-   ========================= */
-
 #intro {
-  padding-top: 2.4rem;    /* 全体より少しだけ詰める */
+  padding-top: 2.4rem;
   padding-bottom: 2.7rem;
 }
 
@@ -825,62 +758,52 @@ header nav a:hover {
 
 #intro .hero-catch {
   margin-top: 0.3rem;
-  margin-bottom: 0.1rem;  /* 下側の余白をかなり減らす */
+  margin-bottom: 0.1rem;
 }
 
-/* =========================
-   全体トーンを少しだけ落として落ち着かせる
-   ========================= */
-
 html {
-  background: #e5e7eb;  /* 明るいグレー1色にして、ギラつきを抑える */
+  background: #e5e7eb;
 }
 
 section:nth-of-type(odd) {
-  background: #f3f4f6;  /* ほんの少し濃い目 */
+  background: #f3f4f6;
 }
 
 section:nth-of-type(even) {
-  background: #e5e7eb;  /* 交互に2トーンのグレーで落ち着いた感じに */
+  background: #e5e7eb;
 }
 
-/* カード自体は真っ白をキープしつつ、周りのグレーで落ち着かせる */
 .card {
   background: #f9fafb;
 }
 
-/* フッターもややグレー寄りにして、浮かないように */
 footer {
-  background: #d1d5db;
-  color: #374151;
-  border-top: 1px solid #cbd5e1;
+  background: #696969;        /* ← ここだけ変更 */
+  color: #e5e7eb;
+  border-top: 1px solid #4b5563;
 }
 
-/* 9業種＋日数：ラベル（成分／累計日数）を非表示に */
-#intro .hero-stat-label {
-  display: none;
-  margin: 0;
+footer a {
+  color: inherit;
+  text-decoration: underline;
 }
 
-/* ラベルが消えた分、数値をほんの少し上に寄せる */
 #intro .hero-stat-value {
   margin-top: 0.05rem;
 }
 
-/* 成分表示セクションの上下余白をさらにタイトに */
 #intro {
-  padding-top: 2rem;     /* 2.4 → 2.0くらいにイメージダウン */
+  padding-top: 2rem;
   padding-bottom: 2.4rem;
 }
 
 #intro .hero-main {
-  padding: 1.6rem 1.8rem 1.4rem;  /* 上下をぎゅっと詰める */
+  padding: 1.6rem 1.8rem 1.4rem;
 }
 
-/* 基本理念の「Like a California Roll」を上品に強調 */
 .tagline-like {
-  font-style: italic;          /* 斜体でニュアンスをつける */
-  color: #0369a1;              /* 落ち着いたブルーグレー寄りの青 */
+  font-style: italic;
+  color: #0369a1;
   letter-spacing: 0.06em;
 }
 
@@ -901,14 +824,13 @@ section {
   border-top: 1px solid rgba(148, 163, 184, 0.4);
 }
 
-/* 一番上の成分表示だけは線を消す */
 section#intro {
   border-top: none;
 }
 
 #intro h1 {
   font-size: 2.1rem;
-  letter-spacing: 0.12em;   /* 少し詰める→広げる ではなく、“伸ばして”ブランド感 */
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -916,7 +838,6 @@ section#intro {
   letter-spacing: 0.18em;
 }
 
-/* 成分表示セクション：タイトルとサブタイトルの行間を詰める */
 #intro h1 {
   margin-bottom: 0.1rem;
   line-height: 1.25;
@@ -928,7 +849,6 @@ section#intro {
   line-height: 1.3;
 }
 
-/* 9業種＋日数を一つの囲いにまとめる */
 #intro .hero-meta {
   display: flex;
   flex-wrap: wrap;
@@ -943,7 +863,6 @@ section#intro {
   box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
 }
 
-/* 中のアイテムは「ラベル＋値」のテキストグループっぽく */
 #intro .hero-stat {
   background: transparent;
   border: none;
@@ -957,7 +876,6 @@ section#intro {
   font-weight: 600;
 }
 
-/* 業種別 日数・成分割合など：タイトルと説明の間をタイトに */
 #overview h3 {
   margin-bottom: 0.15rem;
 }
@@ -966,7 +884,6 @@ section#intro {
   margin-top: 0.05rem;
 }
 
-/* 活動・興味・関心：リストを少し控えめに・ドットも小さく */
 #activities ul {
   margin: 0.3rem 0 0;
   padding-left: 0;
@@ -986,11 +903,10 @@ section#intro {
   position: absolute;
   left: 0;
   top: 0.1rem;
-  font-size: 0.8rem;   /* デフォルトより少し小さめ */
-  color: #9ca3af;      /* 目立ちすぎないグレー */
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
 
-/* 成分表示：2行構成レイアウト */
 #intro .hero-tagline {
   font-size: 0.9rem;
   color: #4b5563;
@@ -1013,7 +929,6 @@ section#intro {
   margin: 0;
 }
 
-/* クリック展開のガイド文 */
 .section-hint {
   margin-top: -0.1rem;
   margin-bottom: 0.9rem;
@@ -1026,33 +941,29 @@ section#intro {
   color: #9ca3af;
 }
 
-/* 成分表示セクションを左寄せに */
 #intro .hero-main {
-  margin-left: 0;       /* containerの左に揃える */
+  margin-left: 0;
   margin-right: auto;
-  text-align: left;     /* 念のためテキストも左寄せ */
+  text-align: left;
 }
 
-/* 成分表示タイトルとサブタイトルを上品寄りに調整 */
 #intro .hero-title-row h1 {
-  font-size: 1.9rem;      /* 2.1 → 1.9 くらいに少しだけ控えめに */
-  font-weight: 600;       /* 700 → 600 で“倍角感”を弱める */
-  letter-spacing: 0.06em; /* ロゴ感は残す */
+  font-size: 1.9rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
 }
 
 #intro .hero-title-row .hero-subtitle {
-  font-size: 1rem;        /* h1より一段下げる */
-  font-weight: 400;       /* 細め */
-  color: #6b7280;         /* 少しトーンを落とす */
+  font-size: 1rem;
+  font-weight: 400;
+  color: #6b7280;
 }
 
-/* Like a California Roll セクションタイトルのニュアンス統一 */
 #california-roll h3 {
-  font-style: italic;       /* 基本理念と同じく斜体 */
-  letter-spacing: 0.06em;   /* すこし字間を開ける */
+  font-style: italic;
+  letter-spacing: 0.06em;
 }
 
-/* 成分表示タイトルの最終テスト用（わざと小さく） */
 #intro .hero-title-row h1 {
   font-size: 1.5rem;
   font-weight: 500;
@@ -1069,26 +980,24 @@ section#intro {
   margin-bottom: 0.8rem;
 }
 
-/* みなさんへ パーパス周り */
 .purpose-main {
   font-size: 1.05rem;
   font-weight: 600;
   margin-top: 0.2rem;
-  margin-bottom: 0.2rem;  /* 行間をぎゅっと詰める */
+  margin-bottom: 0.2rem;
 }
 
 .purpose-sub-en {
-  margin-top: 0;           /* 上を詰める */
-  margin-bottom: 0.3rem;   /* 下の余白 少なめ */
+  margin-top: 0;
+  margin-bottom: 0.3rem;
   font-size: 0.9rem;
-  font-weight: 600;        /* ★ パーパスと太さを揃える */
+  font-weight: 600;
   font-style: italic;
   letter-spacing: 0.06em;
   color: #0369a1;
-  line-height: 0.8;        /* ★ 行内の行間を少し詰める */
+  line-height: 0.8;
 }
 
-/* 説明文は少しだけ落ち着いたトーンに */
 .purpose-desc {
   font-size: 0.9rem;
   color: #4b5563;
@@ -1096,31 +1005,27 @@ section#intro {
   margin-bottom: 0.8rem;
 }
 
-/* みなさんへ パーパス行の行間と余白を調整 */
 #message .purpose-main {
   margin-top: 0 !important;
-  margin-bottom: 0 !important;   /* ← 1行目と2行目の間隔は margin 0 に */
-  line-height: 1.8 !important;   /* ← 基本理念のタグラインと同じノリ */
+  margin-bottom: 0 !important;
+  line-height: 1.8 !important;
 }
 
-/* みなさんへ 英文行：Like a California Roll に寄せる */
 #message .purpose-sub-en {
   margin-top: 0 !important;
-  margin-bottom: 0.7rem !important; /* ← 2行目と3行目の間隔を 0.7rem に */
-  line-height: 1.8 !important;      /* ← 1行目と同じ line-height に */
+  margin-bottom: 0.7rem !important;
+  line-height: 1.8 !important;
   font-size: 0.9rem;
   font-weight: 600 !important;
   font-style: italic;
   letter-spacing: 0.06em;
-  color: inherit !important;  /* ← 色を周りのテキストと同じにする */
+  color: inherit !important;
 }
 
-/* 説明文：上の余白は 0 にして、下の余白はグローバル設定に任せる */
 #message .purpose-desc {
   margin-top: 0 !important;
 }
 
-/* みなさんへ の締めの一文を少しだけ太く */
 #message .closing-line {
   font-weight: 600;
 }
@@ -1770,7 +1675,6 @@ section#intro {
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      // 第一部門 日数表示（1984/4/1 〜 今日）
       const careerSpan = calculateSpan(1984, 4, 1);
       const careerSpanTextEl = document.getElementById("career-span-text");
       if (careerSpanTextEl) {
@@ -1781,7 +1685,6 @@ section#intro {
           careerSpan.days + "日）";
       }
 
-      // A-Zen：2021/9/11 〜 現在
       const azenSpan = calculateSpan(2021, 9, 11);
       const azenPeriodEl = document.getElementById("azen-period");
       if (azenPeriodEl) {
@@ -1791,7 +1694,6 @@ section#intro {
           "（" + azenSpan.totalDays.toLocaleString() + "日）";
       }
 
-      // 成分構成用データ
       const labels = [
         "洋食調理スタッフ",
         "流通店舗向けシステム開発",
@@ -1817,7 +1719,6 @@ section#intro {
 
       const azenDays = azenSpan.totalDays;
 
-      // エントリー配列（就業開始日付順）
       const entries = labels.map((label, index) => ({
         label,
         days: index < baseDays.length ? baseDays[index] : azenDays
@@ -1825,7 +1726,6 @@ section#intro {
 
       const totalDaysAll = entries.reduce((sum, e) => sum + e.days, 0);
 
-      // 色
       const baseColors = [
         "#38bdf8",
         "#a855f7",
@@ -1843,7 +1743,6 @@ section#intro {
         colorByLabel[e.label] = baseColors[index];
       });
 
-      // 成分詳細セクションへのアンカーID
       const detailIdsByLabel = {
         "洋食調理スタッフ": "career-food",
         "流通店舗向けシステム開発": "career-system",
@@ -1856,19 +1755,16 @@ section#intro {
         "A-Zen": "career-azen"
       };
 
-      // 円グラフ用：日数の多い順
       const sortedEntries = [...entries].sort((a, b) => b.days - a.days);
       const pieLabels = sortedEntries.map(e => e.label);
       const pieDays = sortedEntries.map(e => e.days);
       const piePercentages = pieDays.map(d => d / totalDaysAll * 100);
       const pieColors = pieLabels.map(label => colorByLabel[label]);
 
-      // 棒グラフ用：就業開始日付順
       const barLabels = entries.map(e => e.label);
       const barDays = entries.map(e => e.days);
       const barColors = barLabels.map(label => colorByLabel[label]);
 
-      // 棒グラフ
       const barCtx = document.getElementById("barChart");
       if (barCtx && window.Chart) {
         new Chart(barCtx.getContext("2d"), {
@@ -1924,7 +1820,6 @@ section#intro {
         });
       }
 
-      // 円グラフ
       const pieCtx = document.getElementById("pieChart");
       if (pieCtx && window.Chart) {
         new Chart(pieCtx.getContext("2d"), {
@@ -1965,7 +1860,6 @@ section#intro {
         });
       }
 
-      // 成分一覧テーブル
       const tbody = document.getElementById("career-table-body");
       if (tbody) {
         entries.forEach(e => {
@@ -1997,7 +1891,6 @@ section#intro {
         });
       }
 
-      // 成分一覧 折りたたみ
       const toggleBtn = document.getElementById("list-toggle-btn");
       const listPanel = document.getElementById("list-panel");
       if (toggleBtn && listPanel) {
@@ -2016,7 +1909,6 @@ section#intro {
         });
       }
 
-      // 成分詳細：折りたたみ（9業種すべて）
       document.querySelectorAll(".timeline-collapsible").forEach(item => {
         const header = item.querySelector(".timeline-header");
         const body = item.querySelector(".timeline-body");
@@ -2047,7 +1939,6 @@ section#intro {
         });
       });
 
-      // カリフォルニアロール理論：折りたたみ
       document.querySelectorAll(".product-card-collapsible").forEach(card => {
         const header = card.querySelector(".product-header");
         const body = card.querySelector(".product-body");
@@ -2078,7 +1969,6 @@ section#intro {
         });
       });
 
-      // フェードイン対象を登録
       document.querySelectorAll(".card, .timeline-item, .hero-main").forEach(el => {
         el.classList.add("fade-in-up");
       });
@@ -2095,7 +1985,6 @@ section#intro {
 
         document.querySelectorAll(".fade-in-up").forEach(el => observer.observe(el));
       } else {
-        // 対応していない環境では最初から表示
         document.querySelectorAll(".fade-in-up").forEach(el => {
           el.classList.add("is-visible");
         });
