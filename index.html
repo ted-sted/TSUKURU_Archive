@@ -1030,6 +1030,35 @@ section#intro {
   font-weight: 600;
 }
 
+/* 音声カード内のリンクを強調 */
+#audio .audio-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #0369a1; /* サイト全体の青と相性のいいトーン */
+  text-decoration: none;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+}
+
+#audio .audio-link::before {
+  content: "▶";
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+#audio .audio-link:hover {
+  color: #0ea5e9;
+  border-bottom-color: #0ea5e9;
+  text-decoration: none;
+}
+
+/* 音声クレジット小さめ＆グレー */
+#audio .audio-credit {
+  font-size: 0.85em;   /* 親テキストより一段小さく */
+  color: #6b7280;      /* 落ち着いたグレー */
+}
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1591,6 +1620,32 @@ section#intro {
               <li>ランニングという名の徘徊をする</li>
             </ul>
           </article>
+
+          <!-- 音声コンテンツ -->
+          <article class="card product-card" id="audio">
+            <h3>音声</h3>
+            <p>
+              <a href="audio/TSUKURU.mp3"
+                 class="audio-link"
+                 target="_blank"
+                 rel="noopener">
+                聴く概要『つくる』アーカイブ
+              </a><br>
+              　AIでまとめたサイト概要の音声データです。[約16分]<br>
+              <span class="audio-credit">　（音声_ VOICEVOX:麒ヶ島宗麟、No.7）</span>
+            </p>
+            <p>
+              <a href="audio/debate.mp3"
+                 class="audio-link"
+                 target="_blank"
+                 rel="noopener">
+                AIディベート「このプロフィールは偶然か必然か？」
+              </a><br>
+              　私の成分構成は偶然の産物なのか？それとも必然？<br>
+              　AIに議論してもらいました。必聴です！[約14分]
+            </p>
+          </article>
+
         </div>
       </div>
     </section>
