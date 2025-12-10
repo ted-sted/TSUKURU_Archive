@@ -1117,7 +1117,7 @@ section#intro {
         <div class="chart-layout">
           <div class="card">
             <h3>業種別 日数</h3>
-            <p class="muted">各業種に携わった日数を、横方向のバーの長さで表しています。</p>
+            <p class="muted">業種順に携わった日数を、バーの長さで表しています。</p>
             <div class="chart-container">
               <canvas id="barChart" aria-label="業種別日数の棒グラフ" role="img"></canvas>
             </div>
@@ -1628,7 +1628,7 @@ section#intro {
                  class="audio-link"
                  target="_blank"
                  rel="noopener">
-                聴く概要『つくる』アーカイブ
+                聴く概要 『つくる』アーカイブ
               </a><br>
               　AIでまとめたサイト概要音声データです。[約16分]<br>
               <span class="audio-credit">　（声_ VOICEVOX:麒ヶ島宗麟、No.7）</span>
@@ -1638,7 +1638,7 @@ section#intro {
                  class="audio-link"
                  target="_blank"
                  rel="noopener">
-                AIディベート「このキャリアは偶然か必然か？」
+                AIディベート 「このキャリアは偶然か必然か？」
               </a><br>
               　私の成分構成は偶然の産物なのか、または必然か。<br>
               　AIが冷静に深くディベートを繰り広げます。[約14分]
@@ -1939,7 +1939,7 @@ section#intro {
           tr.innerHTML =
             "<td>" + labelCellHtml + "</td>" +
             "<td>" + e.days.toLocaleString() + " 日</td>" +
-            "<td>" + ym.years + "年" + ym.months + "ヶ月（概算）</td>" +
+            "<td>" + ym.years + "年" + ym.months + "ヶ月</td>" +
             "<td>" + percentage.toFixed(1) + " %</td>";
           tbody.appendChild(tr);
         });
