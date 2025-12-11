@@ -1030,32 +1030,115 @@ section#intro {
   font-weight: 600;
 }
 
-/* 音声カード内のリンクを強調 */
-#audio .audio-link {
+/* 音声カード内のタイトルをクリック可能っぽく */
+#audio .audio-link-label {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: #0369a1; /* サイト全体の青と相性のいいトーン */
-  text-decoration: none;
+  color: #0369a1;
+  cursor: pointer;
   border-bottom: 1px solid rgba(37, 99, 235, 0.35);
 }
 
-#audio .audio-link::before {
-  content: "▶";
-  font-size: 0.85rem;
-  opacity: 0.9;
-}
-
-#audio .audio-link:hover {
+#audio .audio-link-label:hover {
   color: #0ea5e9;
   border-bottom-color: #0ea5e9;
-  text-decoration: none;
 }
 
-/* 音声クレジット小さめ＆グレー */
+/* カード内のaudioプレイヤーは隠しておいて、ミニプレイヤーで再生する */
+#audio .audio-player {
+  display: none;
+}
+
+/* クレジットの小さめグレー（既に入れていたらそのままでOK） */
 #audio .audio-credit {
-  font-size: 0.85em;   /* 親テキストより一段小さく */
-  color: #6b7280;      /* 落ち着いたグレー */
+  font-size: 0.85em;
+  color: #6b7280;
+}
+
+/* audioカード内の各ブロックの余白 */
+#audio .audio-item {
+  margin-bottom: 1.2rem;
+}
+
+/* 画面下部のミニオーディオプレイヤー */
+.audio-mini-player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  transform: translateY(100%);
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+  pointer-events: none;
+}
+
+.audio-mini-player.is-visible {
+  transform: translateY(0);
+  pointer-events: auto;
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.35);
+}
+
+.audio-mini-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  background: #111827;
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid #1f2937;
+}
+
+.audio-mini-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.audio-mini-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 0.1rem;
+}
+
+.audio-mini-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#audio-mini-element {
+  max-width: 320px;
+  flex: 0 0 auto;
+}
+
+.audio-mini-close {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.1rem 0.3rem;
+  margin-right: 0.25rem;
+}
+
+.audio-mini-close:hover {
+  color: #e5e7eb;
+}
+
+@media (max-width: 640px) {
+  .audio-mini-inner {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  #audio-mini-element {
+    width: 100%;
+  }
 }
 
   </style>
@@ -1623,26 +1706,38 @@ section#intro {
           <!-- 音声コンテンツ -->
           <article class="card product-card" id="audio">
             <h3>音声</h3>
-            <p>
-              <a href="audio/TSUKURU.mp3"
-                 class="audio-link"
-                 target="_blank"
-                 rel="noopener">
-                聴く概要 『つくる』アーカイブ
-              </a><br>
-              　AIでまとめたサイト概要音声データです。[約16分]<br>
-              <span class="audio-credit">　（声_ VOICEVOX:麒ヶ島宗麟、No.7）</span>
-            </p>
-            <p>
-              <a href="audio/debate.mp3"
-                 class="audio-link"
-                 target="_blank"
-                 rel="noopener">
-                AIディベート 「このキャリアは偶然か必然か？」
-              </a><br>
-              　私の成分構成は偶然の産物なのか、または必然か。<br>
-              　AIが冷静に深くディベートを繰り広げます。[約14分]
-            </p>
+
+            <!-- 概要音声 -->
+            <div class="audio-item">
+              <p>
+                <span class="audio-link-label"
+                      data-audio-src="audio/TSUKURU.mp3">
+                  ▶ 聴く概要 『つくる』アーカイブ
+                </span><br>
+                AIでまとめたサイト概要音声データです。[約16分]<br>
+                <span class="audio-credit">（音声協力 VOICEVOX:麒ヶ島宗麟、No.7）</span>
+              </p>
+              <audio controls preload="none" class="audio-player">
+                <source src="audio/TSUKURU.mp3" type="audio/mpeg">
+                お使いのブラウザでは音声再生に対応していません。
+              </audio>
+            </div>
+
+            <!-- ディベート音声 -->
+            <div class="audio-item">
+              <p>
+                <span class="audio-link-label"
+                      data-audio-src="audio/debate.mp3">
+                  ▶ AIディベート 「このキャリアは偶然か必然か？」
+                </span><br>
+                私の成分構成は偶然の産物なのか、または必然か。<br>
+                AIが冷静に深くディベートを繰り広げます。[約14分]
+              </p>
+              <audio controls preload="none" class="audio-player">
+                <source src="audio/debate.mp3" type="audio/mpeg">
+                お使いのブラウザでは音声再生に対応していません。
+              </audio>
+            </div>
           </article>
 
         </div>
@@ -1687,6 +1782,18 @@ section#intro {
   <footer>
     © 2025 成分表示 - 『つくる』アーカイブ. All rights reserved.
   </footer>
+
+  <!-- 画面下部のミニオーディオプレイヤー -->
+  <div id="audio-mini-player" class="audio-mini-player" aria-hidden="true">
+    <div class="audio-mini-inner">
+      <button type="button" class="audio-mini-close" aria-label="音声プレイヤーを閉じる">✕</button>
+      <div class="audio-mini-meta">
+        <div class="audio-mini-label">AUDIO</div>
+        <div class="audio-mini-title" id="audio-mini-title"></div>
+      </div>
+      <audio id="audio-mini-element" controls preload="none"></audio>
+    </div>
+  </div>
 
   <!-- 日付計算・グラフ描画用スクリプト -->
   <script>
@@ -2044,6 +2151,49 @@ section#intro {
         });
       }
     });
+
+      // --- 音声ミニプレイヤー制御 ---
+      const miniPlayer = document.getElementById("audio-mini-player");
+      const miniAudio = document.getElementById("audio-mini-element");
+      const miniTitle = document.getElementById("audio-mini-title");
+      const miniClose = document.querySelector(".audio-mini-close");
+
+      if (miniPlayer && miniAudio && miniTitle) {
+        document.querySelectorAll("#audio .audio-link-label").forEach(label => {
+          label.style.cursor = "pointer";
+
+          label.addEventListener("click", () => {
+            const src = label.getAttribute("data-audio-src");
+            const titleText = label.textContent.trim();
+
+            if (!src) return;
+
+            // 別の音源に切り替えるときは一度停止して差し替え
+            if (miniAudio.getAttribute("src") !== src) {
+              miniAudio.pause();
+              miniAudio.setAttribute("src", src);
+            }
+
+            miniTitle.textContent = titleText;
+            miniPlayer.classList.add("is-visible");
+            miniPlayer.setAttribute("aria-hidden", "false");
+
+            // 自動再生（ブラウザによってはユーザー操作扱いにならず無視される場合もあるので、失敗しても無視）
+            miniAudio.play().catch(() => {});
+          });
+        });
+
+        const hideMiniPlayer = () => {
+          miniPlayer.classList.remove("is-visible");
+          miniPlayer.setAttribute("aria-hidden", "true");
+          miniAudio.pause();
+        };
+
+        if (miniClose) {
+          miniClose.addEventListener("click", hideMiniPlayer);
+        }
+      }
+
   </script>
 </body>
 </html>
