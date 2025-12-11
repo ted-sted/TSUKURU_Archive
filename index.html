@@ -822,6 +822,7 @@ footer a {
 section {
   padding: 3.2rem 0 2.8rem;
   border-top: 1px solid rgba(148, 163, 184, 0.4);
+  scroll-margin-top: 30px;
 }
 
 section#intro {
@@ -1139,6 +1140,19 @@ section#intro {
   #audio-mini-element {
     width: 100%;
   }
+}
+
+/* カリフォルニアロール本文の読み幅を少しだけ狭める */
+#california-roll .product-body {
+  max-width: 70ch;  /* 70文字前後の幅 */
+  margin: 0 auto;
+}
+
+/* 再生中のタイトルにバッジを付ける */
+#audio .audio-link-label.is-playing::after {
+  content: " 再生中";
+  font-size: 0.75rem;
+  color: #d7ad05; /* ちょっと明るい黄 */
 }
 
   </style>
@@ -1655,7 +1669,7 @@ section#intro {
               </p>
               <p>
                 当時の日本では、寿司職人はおろか、多くの日本人がそれを笑いました。<br>
-                蟹かと思ったらカニカマ、胡瓜かと思ったらアボカド。海苔はなぜか内側に巻き、外にはごまがふってある。<br>
+                蟹かと思ったらカニカマ、胡瓜かと思ったらアボカド。海苔はなぜか内側に巻き、外には胡麻がふってある。<br>
                 「そんなん寿司じゃねぇだろう」と。ナポリタンなんてものを当たり前に食べているくせに！です。
               </p>
               <p>
@@ -1715,7 +1729,7 @@ section#intro {
                   ▶ 聴く概要 『つくる』アーカイブ
                 </span><br>
                 AIでまとめたサイト概要音声データです。[約16分]<br>
-                <span class="audio-credit">（音声協力 VOICEVOX:麒ヶ島宗麟、No.7）</span>
+                <span class="audio-credit">（音_ VOICEVOX:麒ヶ島宗麟、No.7）</span>
               </p>
               <audio controls preload="none" class="audio-player">
                 <source src="audio/TSUKURU.mp3" type="audio/mpeg">
@@ -1728,7 +1742,7 @@ section#intro {
               <p>
                 <span class="audio-link-label"
                       data-audio-src="audio/debate.mp3">
-                  ▶ AIディベート 「このキャリアは偶然か必然か？」
+                  ▶ AIディベート 「この 軌跡 は偶然か必然か？」
                 </span><br>
                 私の成分構成は偶然の産物なのか、または必然か。<br>
                 AIが冷静に深くディベートを繰り広げます。[約14分]
@@ -2168,6 +2182,13 @@ section#intro {
 
             if (!src) return;
 
+  // いったん全タイトルから「再生中」クラスを外す
+  document.querySelectorAll("#audio .audio-link-label").forEach(l => {
+    l.classList.remove("is-playing");
+  });
+  // クリックされたタイトルにだけ付ける
+  label.classList.add("is-playing");
+
             // 別の音源に切り替えるときは一度停止して差し替え
             if (miniAudio.getAttribute("src") !== src) {
               miniAudio.pause();
@@ -2183,11 +2204,19 @@ section#intro {
           });
         });
 
-        const hideMiniPlayer = () => {
-          miniPlayer.classList.remove("is-visible");
-          miniPlayer.setAttribute("aria-hidden", "true");
-          miniAudio.pause();
-        };
+const hideMiniPlayer = () => {
+  miniPlayer.classList.remove("is-visible");
+  miniPlayer.setAttribute("aria-hidden", "true");
+  miniAudio.pause();
+
+  // 再生中バッジをすべて解除
+  document.querySelectorAll("#audio .audio-link-label").forEach(l => {
+    l.classList.remove("is-playing");
+  });
+
+miniAudio.addEventListener("ended", hideMiniPlayer);
+
+};
 
         if (miniClose) {
           miniClose.addEventListener("click", hideMiniPlayer);
