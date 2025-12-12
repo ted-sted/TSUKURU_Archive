@@ -1155,6 +1155,18 @@ section#intro {
   color: #d7ad05; /* ちょっと明るい黄 */
 }
 
+#california-roll {
+  scroll-margin-top: 80px;
+}
+
+.js-open-california {
+  cursor: pointer;
+}
+
+.js-open-california:hover {
+  text-decoration: underline;
+}
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1586,7 +1598,9 @@ section#intro {
               <p>
                 謙虚に真摯に<br>
                 常に新鮮であり続ける<br>
-               <span class="tagline-like">Like a California Roll</span>
+    　　　　<span class="tagline-like js-open-california" role="button" tabindex="0">
+                  Like a California Roll
+               </a>
             </p>
           </article>
 
@@ -2144,6 +2158,52 @@ section#intro {
           }
         });
       });
+
+      // 「基本理念」カードから Like a California Roll の全文へジャンプ＋自動展開
+      const caliLink = document.querySelector(".js-open-california");
+      const caliCard = document.getElementById("california-roll");
+
+      if (caliLink && caliCard) {
+        const openCaliforniaCard = () => {
+          const body = caliCard.querySelector(".product-body");
+          const indicator = caliCard.querySelector(".product-indicator");
+          if (!body) return;
+
+          if (body.hasAttribute("hidden")) {
+            body.removeAttribute("hidden");
+            caliCard.classList.add("is-open");
+            if (indicator) indicator.textContent = "−";
+          }
+        };
+
+        const scrollAndOpen = () => {
+          caliCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+          openCaliforniaCard();
+        };
+
+        // クリック時
+        caliLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          scrollAndOpen();
+        });
+
+        // キーボード操作（Enter / Space）でも動くように
+        caliLink.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            scrollAndOpen();
+          }
+        });
+
+        // URL に #california-roll が付いている状態で開いたときも自動展開
+        if (location.hash === "#california-roll") {
+          openCaliforniaCard();
+        }
+      }
+
 
       document.querySelectorAll(".card, .timeline-item, .hero-main").forEach(el => {
         el.classList.add("fade-in-up");
