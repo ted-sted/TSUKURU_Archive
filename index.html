@@ -1167,6 +1167,18 @@ section#intro {
   text-decoration: underline;
 }
 
+.tagline-like {
+  font-style: italic;
+  color: #0369a1;
+  letter-spacing: 0.06em;
+  display: inline-block; /* ← これを足す */
+}
+
+p.principle-tagline {
+  margin-top: 0.0rem;  /* 好きな値 */
+  margin-bottom: 0;
+}
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1595,12 +1607,16 @@ section#intro {
               基本理念
               <span class="product-note">(戒めとして)</span>
             </h3>
-              <p>
-                謙虚に真摯に<br>
-                常に新鮮であり続ける<br>
-    　　　　<span class="tagline-like js-open-california" role="button" tabindex="0">
-                  Like a California Roll
-               </a>
+
+            <p>
+              謙虚に真摯に<br>
+              常に新鮮であり続ける
+            </p>
+
+            <p class="principle-tagline">
+              <span class="tagline-like js-open-california" role="button" tabindex="0">
+                Like a California Roll
+              </span>
             </p>
           </article>
 
