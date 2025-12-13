@@ -2273,6 +2273,101 @@ section#intro {
           el.classList.add("is-visible");
         });
       }
+
+      // --- ぬるぬるスクロール（ホイール慣性）: 任意 ---
+      (() => {
+        // 動きを減らす設定の人には適用しない
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        // タッチ端末はOS側で慣性があるので触らない
+        const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+        if (isTouch) return;
+
+        let target = window.scrollY;
+        let current = window.scrollY;
+        let rafId = null;
+
+        // 好みで微調整（まずはこのままでOK）
+        const maxDelta = 160; // 1回のホイール入力の最大移動量
+        const ease = 0.12;    // 小さいほど“ぬるっ”、大きいほど“キビキビ”
+
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+        const isEditable = () => {
+          const ae = document.activeElement;
+          if (!ae) return false;
+          const tag = ae.tagName;
+          return ae.isContentEditable || tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+        };
+
+        const canScrollInDirection = (el, deltaY) => {
+          const style = window.getComputedStyle(el);
+          const overflowY = style.overflowY;
+          if (!(overflowY === "auto" || overflowY === "scroll")) return false;
+          if (el.scrollHeight <= el.clientHeight + 1) return false;
+
+          if (deltaY > 0) {
+            return el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+          } else {
+            return el.scrollTop > 0;
+          }
+        };
+
+        const findScrollableParent = (startEl, deltaY) => {
+          let el = startEl;
+          while (el && el !== document.body) {
+            if (el instanceof HTMLElement && canScrollInDirection(el, deltaY)) return el;
+            el = el.parentElement;
+          }
+          return null;
+        };
+
+        const animate = () => {
+          current += (target - current) * ease;
+
+          if (Math.abs(target - current) < 0.5) {
+            window.scrollTo(0, target);
+            rafId = null;
+            return;
+          }
+          window.scrollTo(0, current);
+          rafId = requestAnimationFrame(animate);
+        };
+
+        window.addEventListener(
+          "wheel",
+          (e) => {
+            // ズーム操作や修飾キーは邪魔しない
+            if (e.ctrlKey || e.metaKey) return;
+
+            // 入力中は邪魔しない
+            if (isEditable()) return;
+
+            // トラックパッド由来の“細かい”deltaは触らない（元からぬるぬるなので）
+            if (Math.abs(e.deltaY) < 15) return;
+
+            // 内側にスクロール可能領域があり、まだスクロールできるなら奪わない
+            const scrollParent = findScrollableParent(e.target, e.deltaY);
+            if (scrollParent) return;
+
+            e.preventDefault();
+
+            const delta = clamp(e.deltaY, -maxDelta, maxDelta);
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+            target = clamp(target + delta, 0, maxScroll);
+
+            if (!rafId) rafId = requestAnimationFrame(animate);
+          },
+          { passive: false }
+        );
+
+        window.addEventListener("resize", () => {
+          target = window.scrollY;
+          current = window.scrollY;
+        });
+      })();
+
     });
 
       // --- 音声ミニプレイヤー制御 ---
