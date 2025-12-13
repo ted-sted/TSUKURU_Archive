@@ -1211,6 +1211,55 @@ section#intro {
   display: inline-block; /* ← これを足す */
 }
 
+/* ===== ScrollSpy: 現在地ナビ強調（ヘッダー配色に合わせる） ===== */
+header nav a.is-active,
+header nav a[aria-current="page"] {
+  opacity: 1;
+  color: #e5e7eb;               /* nav a の通常色に合わせる（黒にしない） */
+  border-bottom: 2px solid #38bdf8; /* nav a:hover と同じアクセント */
+  padding-bottom: 0.12rem;
+}
+
+header nav a.is-active:hover,
+header nav a[aria-current="page"]:hover {
+  border-bottom-color: #38bdf8;
+}
+
+/* ===== セクション見出し: さりげない下線ハイライト ===== */
+.section-header h2 {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.22rem;
+}
+
+.section-header h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(2, 132, 199, 0.55);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: transform 320ms ease, opacity 320ms ease;
+}
+
+/* “今いるセクション”だけ下線が出る */
+section.is-active .section-header h2::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* 動きを減らす設定ではアニメーション停止 */
+@media (prefers-reduced-motion: reduce) {
+  .section-header h2::after {
+    transition: none;
+  }
+}
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -2273,6 +2322,98 @@ section#intro {
           el.classList.add("is-visible");
         });
       }
+
+      // --- ScrollSpy + 見出しハイライト（安定版：位置で判定） ---
+      (() => {
+        const navLinks = Array.from(document.querySelectorAll('header nav a[href^="#"]'));
+        const sections = navLinks
+          .map(a => document.querySelector(a.getAttribute("href")))
+          .filter(el => el && el.tagName.toLowerCase() === "section");
+
+        const linkById = new Map();
+        navLinks.forEach(a => {
+          const id = (a.getAttribute("href") || "").slice(1);
+          if (id) linkById.set(id, a);
+        });
+
+        const headerEl = document.querySelector("header");
+        const getOffset = () => (headerEl ? headerEl.offsetHeight : 0) + 16; // ←調整ポイント
+
+        let activeId = null;
+        const setActive = (id) => {
+          if (!id || id === activeId) return;
+
+          // nav
+          if (activeId) {
+            const prevLink = linkById.get(activeId);
+            if (prevLink) {
+              prevLink.classList.remove("is-active");
+              prevLink.removeAttribute("aria-current");
+            }
+            const prevSec = document.getElementById(activeId);
+            if (prevSec) prevSec.classList.remove("is-active");
+          }
+
+          activeId = id;
+
+          const nextLink = linkById.get(id);
+          if (nextLink) {
+            nextLink.classList.add("is-active");
+            nextLink.setAttribute("aria-current", "page");
+          }
+          const nextSec = document.getElementById(id);
+          if (nextSec) nextSec.classList.add("is-active");
+        };
+
+        // スクロール位置から現在の section を決定
+        let ticking = false;
+        const update = () => {
+          ticking = false;
+
+          const offset = getOffset();
+          let current = sections[0];
+
+          for (const sec of sections) {
+            const top = sec.getBoundingClientRect().top;
+            if (top - offset <= 0) {
+              current = sec; // ヘッダー直下を通過した最新の section
+            } else {
+              break; // DOM順なのでここで止めてOK
+            }
+          }
+          if (current && current.id) setActive(current.id);
+        };
+
+        const onScroll = () => {
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+          }
+        };
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", () => {
+          // ヘッダー高さが変わる可能性があるので即更新
+          update();
+        });
+
+        // 初期状態：hash があれば優先
+        if (location.hash) {
+          const id = location.hash.slice(1);
+          if (linkById.has(id)) setActive(id);
+        }
+
+        // 初回反映
+        update();
+
+        // クリック直後も追従（スムーススクロール中の違和感を減らす）
+        navLinks.forEach(a => {
+          a.addEventListener("click", () => {
+            const id = (a.getAttribute("href") || "").slice(1);
+            if (id) setActive(id);
+          });
+        });
+      })();
 
       // --- ぬるぬるスクロール（ホイール慣性）: 任意 ---
       (() => {
