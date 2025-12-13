@@ -32,8 +32,6 @@
   <meta name="twitter:image" content="https://ted-sted.github.io/TSUKURU_Archive/og-image.png" />
 
   <style>
-
-  <style>
     *, *::before, *::after {
       box-sizing: border-box;
     }
@@ -1094,27 +1092,10 @@ section#intro {
   color: #6b7280;
 }
 
+
 /* audioカード内の各ブロックの余白 */
 #audio .audio-item {
   margin-bottom: 1.2rem;
-}
-
-/* 画面下部のミニオーディオプレイヤー */
-.audio-mini-player {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 60;
-  transform: translateY(100%);
-  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
-  pointer-events: none;
-}
-
-.audio-mini-player.is-visible {
-  transform: translateY(0);
-  pointer-events: auto;
-  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.35);
 }
 
 .audio-mini-inner {
@@ -1257,6 +1238,82 @@ section.is-active .section-header h2::after {
 @media (prefers-reduced-motion: reduce) {
   .section-header h2::after {
     transition: none;
+  }
+}
+
+/* ===== Hover対象を詳細（timeline）にも拡張 ===== */
+.card,
+.timeline-item {
+  transition: transform 180ms ease, box-shadow 220ms ease;
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .card:hover,
+  .timeline-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 56px rgba(15, 23, 42, 0.14);
+  }
+}
+
+.card:focus-within,
+.timeline-item:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 56px rgba(15, 23, 42, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .timeline-item {
+    transition: none;
+  }
+}
+
+/* 画面下部のミニオーディオプレイヤー（is-visibleで出し入れ：統一版） */
+.audio-mini-player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+
+  opacity: 0;
+  transform: translateY(100%);
+  filter: blur(6px);
+  visibility: hidden;
+  pointer-events: none;
+  box-shadow: none;
+
+  transition:
+    opacity 220ms ease,
+    transform 240ms cubic-bezier(.2,.8,.2,1),
+    filter 260ms ease,
+    visibility 0s linear 260ms,
+    box-shadow 240ms ease;
+  will-change: opacity, transform, filter;
+}
+
+.audio-mini-player.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  visibility: visible;
+  pointer-events: auto;
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.35);
+
+  transition:
+    opacity 220ms ease,
+    transform 240ms cubic-bezier(.2,.8,.2,1),
+    filter 260ms ease,
+    visibility 0s linear 0s,
+    box-shadow 240ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audio-mini-player {
+    transition: none;
+    transform: none;
+    filter: none;
   }
 }
 
