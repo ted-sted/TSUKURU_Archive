@@ -331,7 +331,7 @@ header {
       padding: 1.1rem 1.2rem;
       border: 1px solid #e5e7eb;
       box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-      scroll-margin-top: 88px;
+      scroll-margin-top: 0;
       will-change: transform, box-shadow;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
@@ -587,13 +587,30 @@ header {
 
     .fade-in-up {
       opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: translateY(var(--reveal-y, 18px)) scale(var(--reveal-scale, 0.985));
+      filter: blur(var(--reveal-blur, 6px));
+      transition:
+        opacity 0.86s cubic-bezier(.2,.8,.2,1),
+        transform 0.86s cubic-bezier(.2,.8,.2,1),
+        filter 0.86s cubic-bezier(.2,.8,.2,1);
+      transition-delay: var(--reveal-delay, 0ms);
+      will-change: transform, opacity, filter;
     }
 
     .fade-in-up.is-visible {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in-up,
+      .fade-in-up.is-visible {
+        transition: none !important;
+        transform: none !important;
+        filter: none !important;
+        opacity: 1 !important;
+      }
     }
 
     footer {
@@ -1292,4 +1309,991 @@ section.is-active .section-header h2::after {
   }
 }
 
+/* =========================================================
+   2025-26 UI Motion Patch (non-destructive)
+   - KPI boot overlay (成分集計中)
+   - Progress ring
+   - Focus panel (成分詳細カード表示) + background scroll lock
+   ========================================================= */
+
+/* Body scroll lock (modal open) */
+body.modal-open{
+  position: fixed;
+  left: 0; right: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* KPI boot overlay */
+.kpiBoot{
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(250,250,252,.72);
+  backdrop-filter: blur(10px);
+  z-index: 1200;
+}
+.kpiBootInner{
+  width: min(720px, calc(100vw - 28px));
+  padding: 22px 20px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.86);
+  border: 1px solid rgba(0,0,0,.10);
+  box-shadow: 0 18px 55px rgba(0,0,0,.14);
+}
+.kpiBootTitle{
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: rgba(0,0,0,.60);
+  letter-spacing: .02em;
+}
+.kpiGrid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.kpiCard{
+  padding: 14px 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(255,255,255,.78);
+}
+.kpiNum{
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.kpiLbl{
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgba(0,0,0,.60);
+}
+
+/* Progress ring */  
+
+/* Focus panel backdrop */
+.backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.22);
+  backdrop-filter: blur(7px);
+  z-index: 1000;
+}
+
+/* Focus panel (right / bottom on mobile) */
+.focusPanel{
+  position: fixed;
+  /* Higher placement; respect safe-area on notch devices */
+  top: max(4px, env(safe-area-inset-top));
+  right: 12px;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  width: min(560px, calc(100vw - 24px));
+  background: rgba(255,255,255,.92);
+  border-radius: 16px;
+  box-shadow: 0 18px 55px rgba(0,0,0,.14);
+  border: 1px solid rgba(0,0,0,.10);
+  transform: translateX(16px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1050;
+  display: grid;
+  grid-template-rows: 52px 1fr;
+  overscroll-behavior: contain; /* prevent scroll chaining (supported browsers) */
+}
+.focusPanel.is-open{
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 420ms cubic-bezier(.2,.8,.2,1);
+}
+.focusTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 8px 10px 8px 14px;
+  border-bottom: 1px solid rgba(0,0,0,.10);
+}
+.focusTitle{
+  font-size: 13px;
+  color: rgba(0,0,0,.60);
+}
+.focusClose{
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(255,255,255,.85);
+  cursor: pointer;
+}
+.focusBody{
+  overflow: auto;
+  padding: 14px 16px 20px;
+  overscroll-behavior: contain; /* prevent scroll chaining */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile: slide from bottom */
+@media (max-width: 820px){
+  .focusPanel{
+    left: 12px;
+    right: 12px;
+    width: auto;
+    top: auto;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    /* Raise the sheet by increasing height (still bottom-sheet style) */
+    height: min(82vh, 720px);
+    transform: translateY(18px);
+  }
+  .focusPanel.is-open{
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .kpiBoot{ backdrop-filter: none; }
+  .focusPanel.is-open{ transition: none; }
+}
+
+
+/* ================================
+   Next Step UI Enhancements
+   - MiniMap (right rail)
+   - Table ↔ Timeline linking highlight
+   - FLIP/flight ghost styling
+   ================================ */
+
+.miniMap{
+  position: fixed;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 995;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,.16);
+  background: rgba(255,255,255,.74);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(15,23,42,.10);
+}
+
+.miniDot{
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(17,24,39,.22);
+  cursor: pointer;
+  transition: transform .18s cubic-bezier(.2,.8,.2,1), background .18s cubic-bezier(.2,.8,.2,1);
+}
+
+.miniDot:hover{
+  transform: scale(1.15);
+  background: rgba(17,24,39,.34);
+}
+
+.miniDot.is-active,
+.miniDot[aria-current="true"]{
+  background: rgba(17,24,39,.92);
+  transform: scale(1.25);
+}
+
+.miniDot:focus-visible{
+  outline: 2px solid rgba(56,189,248,.75);
+  outline-offset: 4px;
+}
+
+.miniDot::after{
+  content: attr(data-label);
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,.18);
+  background: rgba(255,255,255,.86);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 34px rgba(15,23,42,.12);
+  transition: opacity .16s cubic-bezier(.2,.8,.2,1), transform .16s cubic-bezier(.2,.8,.2,1);
+}
+
+.miniDot:hover::after,
+.miniDot:focus-visible::after{
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+
+@media (max-width: 820px){
+  .miniMap{ display:none; }
+}
+
+/* Table ↔ Timeline highlight */
+#career-table-body tr.is-linked{
+  background: color-mix(in oklab, var(--tone-accent) 14%, transparent);
+}
+
+#career-table-body tr.is-linked td{
+  border-color: color-mix(in oklab, var(--tone-accent) 32%, transparent);
+}
+
+.timeline-item.is-linked{
+  outline: 2px solid color-mix(in oklab, var(--tone-accent) 55%, transparent);
+  outline-offset: 4px;
+
+
+/* Chart ↔ Table ↔ Timeline highlight (non-destructive; separate class) */
+#career-table-body tr.is-xlinked{
+  background: color-mix(in oklab, var(--tone-accent) 10%, transparent);
+}
+#career-table-body tr.is-xlinked td{
+  border-color: color-mix(in oklab, var(--tone-accent) 24%, transparent);
+}
+.timeline-item.is-xlinked{
+  outline: 2px solid color-mix(in oklab, var(--tone-accent) 42%, transparent);
+  outline-offset: 4px;
+}
+
+}
+
+/* FLIP ghost */
+.flyGhost{
+  box-shadow: 0 22px 55px rgba(15,23,42,.18);
+  border-radius: 14px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .miniDot{ transition:none; }
+}
+
+
+
+/* Guided attention (table click -> timeline card) */
+@keyframes peekPulse{
+  0%   { box-shadow: 0 0 0 0 rgba(17,24,39,.0); transform: translateY(0); }
+  25%  { box-shadow: 0 0 0 6px rgba(17,24,39,.10); transform: translateY(-1px); }
+  55%  { box-shadow: 0 0 0 10px rgba(17,24,39,.06); }
+  100% { box-shadow: 0 0 0 0 rgba(17,24,39,.0); transform: translateY(0); }
+}
+.timeline-item.is-peek{
+  animation: peekPulse 900ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* =========================================================
+   Color Tone v7 (2025-26)
+   - Neutral materiality + calm tech accent
+   - Keeps content unchanged; updates tone only
+   ========================================================= */
+
+:root{
+  /* Core palette */
+  --bg:  #fbfaf7;        /* warm off-white "paper" */
+  --bg2: #f0ece4;        /* warmer top tint */
+  --surface: rgba(255,255,255,.74);
+  --surface-strong: rgba(255,255,255,.92);
+
+  --text: #141316;       /* ink */
+  --muted: rgba(20,19,22,.64);
+  --muted2: rgba(20,19,22,.46);
+
+  --line: rgba(20,19,22,.12);
+  --line2: rgba(20,19,22,.18);
+
+  --shadow-1: 0 10px 30px rgba(20,19,22,.10);
+  --shadow-2: 0 18px 55px rgba(20,19,22,.14);
+
+  /* Accent (calm, modern) */
+  --accent: #0f766e;     /* aquatic teal */
+  --accent-rgb: 15 118 110;
+  --accent-ink: #115e59;
+  --accent-soft: rgba(15,118,110,.14);
+
+  /* Secondary warm accent (optional) */
+  --warm: #a47864;       /* mocha-like */
+  --warm-rgb: 164 120 100;
+  --warm-soft: rgba(164,120,100,.12);
+
+  /* Category colors (charts / timeline) */
+  --cat-food:   #0f766e;
+  --cat-system: #6d28d9;
+  --cat-store:  #d97706;
+  --cat-retail: #2563eb;
+  --cat-fin:    #be185d;
+  --cat-wood:   #a16207;
+  --cat-light:  #0284c7;
+  --cat-auto:   #7c3aed;
+  --cat-azen:   #15803d;
+}
+
+/* Background & typography */
+html{
+  background: linear-gradient(to bottom, var(--bg2), var(--bg));
+}
+
+body{
+  color: var(--text);
+}
+
+/* Subtle modern texture (very light) */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 650px at 18% 10%, rgba(var(--accent-rgb), .07), transparent 60%),
+    radial-gradient(820px 560px at 86% 18%, rgba(var(--warm-rgb), .06), transparent 58%),
+    linear-gradient(to bottom, rgba(20,19,22,.025), transparent 38%);
+  opacity: .95;
+  z-index: 0;
+}
+body > *{ position: relative; z-index: 1; }
+
+/* Header becomes modern "glass" */
+header{
+  background: rgba(255,255,255,.66);
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+}
+header a{ color: var(--text); }
+nav a{ opacity: .86; }
+nav a:hover{ opacity: 1; text-decoration: none; }
+nav a:focus-visible{
+  outline: 2px solid rgba(var(--accent-rgb), .55);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* Hero card */
+.hero-main{
+  background: radial-gradient(circle at top left, rgba(255,255,255,.90), var(--bg2));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-2);
+  color: var(--text);
+}
+.hero-subtitle{ color: var(--muted); }
+
+/* Section headings */
+h2{
+  border-left-color: var(--accent);
+  background: linear-gradient(90deg, rgba(var(--accent-rgb), .14), transparent);
+}
+h3{ color: var(--text); }
+
+/* Tables & cards (soft material) */
+table{
+  border-color: var(--line);
+}
+th, td{
+  border-color: var(--line);
+}
+thead th{
+  background: rgba(255,255,255,.60);
+}
+tbody tr:nth-child(even){
+  background: rgba(255,255,255,.38);
+}
+
+/* Motion patch components adopt palette */
+.kpiBoot{
+  background: rgba(251,250,247,.72);
+}
+.kpiBootInner{
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-2);
+}
+.kpiCard{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.72);
+}
+.kpiBootTitle{ color: var(--muted); }
   
+
+.backdrop{ background: rgba(0,0,0,.20); }
+
+.focusPanel{
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-2);
+}
+.focusTop{ border-bottom: 1px solid var(--line); }
+.focusTitle{ color: var(--muted); }
+.focusClose{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.86);
+}
+
+.miniMap{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.68);
+  box-shadow: 0 16px 40px rgba(20,19,22,.10);
+}
+.miniDot{
+  background: rgba(20,19,22,.18);
+}
+.miniDot.is-active{
+  background: rgba(var(--accent-rgb), .85);
+}
+.miniDot:focus-visible{
+  outline: 2px solid rgba(var(--accent-rgb), .65);
+}
+.miniDot::after{
+  background: rgba(255,255,255,.90);
+  border: 1px solid var(--line);
+  color: var(--text);
+  box-shadow: 0 14px 34px rgba(20,19,22,.12);
+}
+
+/* Timeline category accents (override to match v7 palette) */
+.timeline-item-food   { border-color: color-mix(in srgb, var(--cat-food)   45%, transparent); }
+.timeline-item-food::before   { background: linear-gradient(90deg, var(--cat-food), transparent); }
+
+.timeline-item-system { border-color: color-mix(in srgb, var(--cat-system) 45%, transparent); }
+.timeline-item-system::before { background: linear-gradient(90deg, var(--cat-system), transparent); }
+
+.timeline-item-store  { border-color: color-mix(in srgb, var(--cat-store)  48%, transparent); }
+.timeline-item-store::before  { background: linear-gradient(90deg, var(--cat-store), transparent); }
+
+.timeline-item-retail { border-color: color-mix(in srgb, var(--cat-retail) 40%, transparent); }
+.timeline-item-retail::before { background: linear-gradient(90deg, var(--cat-retail), transparent); }
+
+.timeline-item-fin    { border-color: color-mix(in srgb, var(--cat-fin)    44%, transparent); }
+.timeline-item-fin::before    { background: linear-gradient(90deg, var(--cat-fin), transparent); }
+
+.timeline-item-wood   { border-color: color-mix(in srgb, var(--cat-wood)   46%, transparent); }
+.timeline-item-wood::before   { background: linear-gradient(90deg, var(--cat-wood), transparent); }
+
+.timeline-item-light  { border-color: color-mix(in srgb, var(--cat-light)  46%, transparent); }
+.timeline-item-light::before  { background: linear-gradient(90deg, var(--cat-light), transparent); }
+
+.timeline-item-auto   { border-color: color-mix(in srgb, var(--cat-auto)   44%, transparent); }
+.timeline-item-auto::before   { background: linear-gradient(90deg, var(--cat-auto), transparent); }
+
+.timeline-item-azen   { border-color: color-mix(in srgb, var(--cat-azen)   46%, transparent); }
+.timeline-item-azen::before   { background: linear-gradient(90deg, var(--cat-azen), transparent); }
+
+/* Timeline meta (first line) follows category */
+.timeline-item-food   .timeline-meta:first-of-type { color: var(--cat-food); }
+.timeline-item-system .timeline-meta:first-of-type { color: var(--cat-system); }
+.timeline-item-store  .timeline-meta:first-of-type { color: var(--cat-store); }
+.timeline-item-retail .timeline-meta:first-of-type { color: var(--cat-retail); }
+.timeline-item-fin    .timeline-meta:first-of-type { color: var(--cat-fin); }
+.timeline-item-wood   .timeline-meta:first-of-type { color: var(--cat-wood); }
+.timeline-item-light  .timeline-meta:first-of-type { color: var(--cat-light); }
+.timeline-item-auto   .timeline-meta:first-of-type { color: var(--cat-auto); }
+.timeline-item-azen   .timeline-meta:first-of-type { color: var(--cat-azen); }
+
+
+/* ============================================================
+   Color Tone v8 (2025–26):
+   Warm neutral / earthy brown + calm teal/blue accent
+   (added at end to override earlier hard-coded colors)
+   ============================================================ */
+
+:root{
+  --tone-bg1: #fbf7f0;           /* warm off-white */
+  --tone-bg2: #f1ece3;           /* warm gray-beige */
+  --tone-panel: rgba(255,255,255,.76);
+  --tone-panel-2: rgba(255,253,249,.82);
+  --tone-ink: #1f2328;
+  --tone-muted: rgba(31,35,40,.70);
+  --tone-line: rgba(31,35,40,.14);
+  --tone-shadow: 0 20px 55px rgba(31,35,40,.12);
+
+  --tone-accent: #0f766e;        /* teal */
+  --tone-accent-soft: rgba(15,118,110,.12);
+  --tone-accent-2: #2563eb;      /* calm blue (secondary) */
+  --tone-brown: #6b4f3a;         /* earthy brown for subtle emphasis */
+}
+
+/* base */
+html{
+  background: linear-gradient(to bottom, var(--tone-bg2), var(--tone-bg1)) !important;
+}
+body{
+  color: var(--tone-ink) !important;
+}
+
+/* header: glassy warm neutral (more visible than v7) */
+header{
+  background: rgba(251,247,240,.78) !important;
+  color: var(--tone-ink) !important;
+  border-bottom: 1px solid var(--tone-line) !important;
+  box-shadow: 0 10px 30px rgba(31,35,40,.08);
+}
+nav a{
+  color: var(--tone-ink) !important;
+  opacity: .85 !important;
+}
+nav a:hover{
+  border-bottom-color: var(--tone-accent) !important;
+}
+header .site-title{
+  color: var(--tone-ink) !important;
+}
+
+/* section surfaces */
+section:nth-of-type(odd){
+  background: rgba(255,253,249,.92) !important;
+}
+section:nth-of-type(even){
+  background: rgba(243,237,228,.60) !important;
+}
+
+/* typography accents */
+h1,h2,h3,h4{ color: var(--tone-ink) !important; }
+p{ color: var(--tone-muted) !important; }
+.muted{ color: rgba(31,35,40,.58) !important; }
+
+h2{
+  border-left-color: var(--tone-accent) !important;
+  background: linear-gradient(90deg, var(--tone-accent-soft), rgba(251,247,240,0)) !important;
+}
+
+/* hero */
+.hero-main{
+  background: radial-gradient(circle at top left, rgba(255,253,249,.96), rgba(241,236,227,.88)) !important;
+  border: 1px solid var(--tone-line) !important;
+  box-shadow: var(--tone-shadow) !important;
+}
+.hero-stat{
+  background: rgba(255,253,249,.92) !important;
+  border: 1px solid var(--tone-line) !important;
+}
+.hero-stat-label{ color: rgba(31,35,40,.60) !important; }
+
+/* tables */
+table{
+  border-color: var(--tone-line) !important;
+  background: rgba(255,253,249,.92) !important;
+}
+th{
+  background: rgba(15,118,110,.08) !important;
+  color: var(--tone-ink) !important;
+}
+td{ border-color: rgba(31,35,40,.10) !important; }
+
+/* detail cards + focus panel */
+.detailCard{
+  background: rgba(255,253,249,.88) !important;
+  border-color: rgba(31,35,40,.16) !important;
+}
+.detailCard:hover{
+  box-shadow: 0 18px 45px rgba(31,35,40,.12) !important;
+}
+.backdrop{
+  background: rgba(31,35,40,.22) !important;
+}
+.focusPanel{
+  background: rgba(255,253,249,.92) !important;
+  border-color: rgba(31,35,40,.18) !important;
+}
+.focusClose{
+  border-color: rgba(31,35,40,.16) !important;
+}
+
+/* KPI boot */
+.kpiBoot{
+  background: rgba(251,247,240,.72) !important;
+}
+.kpiBootInner{
+  background: rgba(255,253,249,.86) !important;
+  border-color: rgba(31,35,40,.16) !important;
+}
+.kpiCard{
+  background: rgba(255,253,249,.78) !important;
+  border-color: rgba(31,35,40,.12) !important;
+}
+
+/* minimap (right-side dots) */
+.miniMap{
+  background: rgba(255,253,249,.74) !important;
+  border-color: rgba(31,35,40,.14) !important;
+}
+.miniDot{
+  border-color: rgba(31,35,40,.22) !important;
+  background: rgba(31,35,40,.16) !important;
+}
+.miniDot.is-active,
+.miniDot[aria-current="true"]{
+  background: var(--tone-accent) !important;
+  border-color: rgba(15,118,110,.40) !important;
+}
+.miniDot::after{
+  background: rgba(31,35,40,.88) !important;
+  color: rgba(255,253,249,.96) !important;
+  border: 1px solid rgba(255,253,249,.14) !important;
+}
+
+/* links: subtle but modern */
+a:hover{
+  text-decoration-color: rgba(15,118,110,.45);
+}
+
+/* ============================================================
+   v9 Patch: Header/Footer unify + Fixed header (2025-12-15)
+   ============================================================ */
+
+:root{
+  --header-surface: rgba(255,253,249,.80);
+  --header-line: rgba(92,70,43,.18);
+}
+
+/* Fixed header: robust across iOS/desktop */
+header{
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 800 !important; /* below modal(1000+) */
+  background: var(--header-surface) !important;
+  color: var(--tone-ink) !important;
+  border-bottom: 1px solid var(--header-line) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Footer matches header surface */
+footer{
+  background: var(--header-surface) !important;
+  color: var(--tone-muted) !important;
+  border-top: 1px solid var(--header-line) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Offset content for fixed header */
+:root{
+  /* Anchor offset is intentionally a bit smaller than header height:
+     Sections have generous top padding, so this reduces the perceived “gap”
+     while still keeping headings visible. */
+  --anchor-offset: clamp(12px, calc(var(--header-h, 56px) - 18px), 54px);
+}
+
+html{
+  scroll-padding-top: var(--anchor-offset);
+}
+body{
+  padding-top: var(--header-h, 56px);
+}
+
+/* Anchor offset without changing layout (works for native hash jumps) */
+section[id]::before,
+article[id]::before{
+  content: "";
+  display: block;
+  height: var(--anchor-offset);
+  margin-top: calc(-1 * var(--anchor-offset));
+}
+
+/* Avoid double offsets from generic scroll-margin rules */
+section, h2, h3, [id]{
+  scroll-margin-top: 0;
+}
+
+
+
+/* ============================================================
+   v13: Link system + typography tuning + accessibility (2025-12-15)
+   ============================================================ */
+
+:root{
+  --measure: 72ch;
+  --tone-link: color-mix(in oklab, var(--tone-accent) 78%, #0b1220);
+  --tone-link-weak: color-mix(in oklab, var(--tone-link) 48%, transparent);
+}
+
+/* Reading measure: keep long-form text comfortable without shrinking layouts */
+main p,
+main li{
+  max-width: var(--measure);
+  line-height: 1.85;
+}
+
+@supports (text-wrap: pretty){
+  main p, main li{ text-wrap: pretty; }
+}
+
+/* Link states (consistent, modern, accessible) */
+a{
+  color: var(--tone-link);
+  text-decoration-color: var(--tone-link-weak);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+a:hover{
+  text-decoration-thickness: 0.12em;
+  text-decoration-color: color-mix(in oklab, var(--tone-link) 70%, transparent);
+}
+a:visited{
+  color: color-mix(in oklab, var(--tone-link) 78%, #5b3a1d);
+}
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible{
+  outline: 2px solid color-mix(in oklab, var(--tone-accent) 70%, #ffffff);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* Header nav: keep text crisp, add subtle active marker without layout shift */
+header nav a{
+  color: var(--tone-ink) !important;
+  text-decoration: none;
+  position: relative;
+}
+header nav a.is-active::after,
+header nav a[aria-current="page"]::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.55rem;
+  height: 2px;
+  border-radius: 99px;
+  background: color-mix(in oklab, var(--tone-accent) 68%, transparent);
+}
+
+/* Table links: always feel interactive */
+a.career-link{
+  text-decoration-color: color-mix(in oklab, var(--tone-link) 42%, transparent);
+}
+a.career-link:hover{
+  text-decoration-color: color-mix(in oklab, var(--tone-link) 78%, transparent);
+}
+
+/* Reduced motion: avoid extra transitions */
+@media (prefers-reduced-motion: reduce){
+  a, button, [role="button"]{ transition: none !important; }
+}
+
+
+/* ============================================================
+   v14 Patch: Header nav underline normalization (single line)
+   - remove double lines (border + pseudo)
+   - keep a single active indicator line
+   ============================================================ */
+
+header{
+  border-bottom: none !important; /* avoid grey line competing with active marker */
+  box-shadow: 0 10px 26px rgba(15,23,42,.08) !important; /* separation without line */
+}
+
+header nav a{
+  text-decoration: none !important;
+}
+
+header nav a:hover,
+header nav a:focus,
+header nav a:active{
+  text-decoration: none !important; /* prevent double underline on hover */
+}
+
+/* avoid visited color drift in header nav */
+header nav a:visited{
+  color: var(--tone-ink) !important;
+}
+
+/* Disable legacy border-bottom indicator (keep only ::after) */
+header nav a.is-active,
+header nav a[aria-current="page"]{
+  border-bottom: none !important;
+}
+
+/* Single active line positioning */
+header nav a.is-active::after,
+header nav a[aria-current="page"]::after{
+  bottom: -0.28rem; /* slightly closer to text */
+  height: 2px;
+  background: color-mix(in oklab, var(--tone-accent) 78%, transparent);
+}
+
+
+
+
+/* ============================================================
+   v15: Nav underline single source of truth + minimap label
+   ============================================================ */
+
+/* Ensure header nav underline is always a single line */
+header nav a{
+  border-bottom: none !important;
+  text-decoration: none !important;
+  position: relative;
+  padding-bottom: 0.45rem; /* room for underline */
+}
+
+/* single underline (no double line) */
+header nav a::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.18rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--tone-accent, rgba(2,132,199,1));
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1), opacity 220ms cubic-bezier(.2,.8,.2,1);
+}
+
+header nav a:hover::after,
+header nav a:focus-visible::after{
+  transform: scaleX(.7);
+  opacity: .45;
+}
+
+header nav a.is-active::after,
+header nav a[aria-current="page"]::after{
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* Mini map dot labels */
+.miniDot{
+  outline: none;
+}
+.miniDotLabel{
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(17,24,39,.12);
+  box-shadow: 0 10px 24px rgba(15,23,42,.10);
+  color: rgba(17,24,39,.88);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms cubic-bezier(.2,.8,.2,1), transform 160ms cubic-bezier(.2,.8,.2,1);
+}
+
+.miniDot:hover .miniDotLabel,
+.miniDot:focus-visible .miniDotLabel{
+  opacity: 1;
+  transform: translateY(-50%) translateX(-4px);
+}
+
+/* In very small screens, keep minimap hidden as designed */
+@media (max-width: 820px){
+  .miniMap{ display: none; }
+}
+
+
+/* ============================================================
+   v17: MiniMap tooltip label fix
+   - Avoid the dot overlapping the last character
+   - Single source of truth: miniDot::after reads data-label
+   ============================================================ */
+
+/* The span-based tooltip is deprecated (kept only for backward compatibility) */
+.miniDotLabel{ display: none !important; }
+
+/* Definitive tooltip positioning */
+.miniDot::after{
+  content: attr(data-label) !important;
+  right: calc(100% + 14px) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 2 !important;
+}
+
+.miniDot:hover::after,
+.miniDot:focus-visible::after{
+  opacity: 1 !important;
+  transform: translateY(-50%) !important;
+}
+
+/* ============================================================
+   v18: Timeline card color linkage (Chart ↔ Timeline)
+   - Restore/upgrade the “top accent” per category
+   - Use the same CSS variables as charts ( --cat-* )
+   - Add a subtle color dot on the title for stronger association
+   ============================================================ */
+
+.timeline-item{
+  overflow: hidden;
+  --tl-color: var(--tone-accent);
+  /* fallback: keep existing border; override where supported */
+}
+
+/* map timeline classes to chart palette vars */
+.timeline-item-food{    --tl-color: var(--cat-food); }
+.timeline-item-system{  --tl-color: var(--cat-system); }
+.timeline-item-store{   --tl-color: var(--cat-store); }
+.timeline-item-retail{  --tl-color: var(--cat-retail); }
+.timeline-item-finance{ --tl-color: var(--cat-fin); }
+.timeline-item-wood{    --tl-color: var(--cat-wood); }
+.timeline-item-light{   --tl-color: var(--cat-light); }
+.timeline-item-auto{    --tl-color: var(--cat-auto); }
+.timeline-item-azen{    --tl-color: var(--cat-azen); }
+
+/* top accent strip (previously too thin; now clearly visible) */
+.timeline-item-accent::before{
+  height: 10px;
+  border-radius: 14px 14px 0 0;
+  opacity: .96;
+  background: linear-gradient(90deg, var(--tl-color), rgba(0,0,0,0));
+}
+
+/* tie the first meta line to the category color */
+.timeline-item-accent .timeline-meta:first-of-type{
+  color: var(--tl-color);
+}
+
+/* title dot (low-noise, high clarity) */
+.timeline-title{
+  position: relative;
+  padding-left: 14px;
+}
+.timeline-title::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top: 0.72em;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--tl-color);
+}
+
+/* Enhanced readability + premium feel (modern browsers) */
+@supports (color: color-mix(in oklab, white 50%, black)){
+  .timeline-item{
+    border-color: color-mix(in oklab, var(--tl-color) 34%, rgba(31,35,40,.16));
+  }
+
+  .timeline-item-accent::before{
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--tl-color) 92%, white 8%),
+      rgba(0,0,0,0)
+    );
+  }
+
+  .timeline-item-accent .timeline-meta:first-of-type{
+    color: color-mix(in oklab, var(--tl-color) 78%, var(--text) 22%);
+  }
+
+  .timeline-title::before{
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--tl-color) 14%, transparent);
+  }
+}
