@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>成分表示 - 『つくる』の軌跡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="1984年から続く9業種の成分表示。『つくる』の軌跡を視覚化したプロフィールアーカイブ。" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="assets/css/bento.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body class="bento-body">
+  <!-- Opening Splash Screen -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <p class="splash-sub">『つくる』の軌跡</p>
+      <h1 class="splash-title">成分表示</h1>
+      <div class="splash-stats">
+        <span id="splash-days" class="splash-days">0</span>
+      </div>
+      <div class="splash-progress-container">
+        <div id="splash-progress-bar" class="splash-progress-bar"></div>
+      </div>
+      <button id="splash-enter-btn" class="splash-enter-btn">Enter Archives</button>
+    </div>
+  </div>
+
+  <main class="bento-main">
+    <div class="bento-grid" id="bento-grid">
+      <!-- Header Tile -->
+      <div class="bento-card header-tile">
+        <div class="tile-content header-content">
+          <p class="header-sub">『つくる』アーカイブ</p>
+          <h1 class="header-title">成分表示</h1>
+          <div class="header-stats">
+            <p>成分：9業種</p>
+            <p>累計日数：<span id="header-days">0</span>日</p>
+            <p>（<span id="header-years">0年0ヶ月0日</span>）</p>
+            <div class="header-timeline-container">
+              <div id="header-timeline-bar" class="header-timeline-bar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Tile 1: 業種別 日数 -->
+      <div class="bento-card chart-tile" data-type="chart" data-chart="bar">
+        <div class="tile-header">
+          <h3>成分別 日数</h3>
+          <p class="tile-description">就業順に携わった日数をバーの長さで表しています。</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart Tile 2: 業種別 成分割合 -->
+      <div class="bento-card chart-tile" data-type="chart" data-chart="pie">
+        <div class="tile-header">
+          <h3>成分別 割合</h3>
+          <p class="tile-description">全期間を100％としたときの成分構成です。</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="pieChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Tile 3: 成分一覧 -->
+      <div class="bento-card list-tile" data-type="list" data-id="component-list">
+        <div class="tile-header">
+          <h3>成分詳細</h3>
+          <span class="tile-action-icon">+</span>
+        </div>
+        <div class="tile-content">
+          <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">業種別の詳細情報です。</p>
+        </div>
+      </div>
+
+      <!-- Tile 4: Philosophy -->
+      <div class="bento-card philosophy-tile" data-type="philosophy">
+        <div class="tile-header">
+          <h3><strong>基本理念</strong></h3>
+          <span class="tile-action-icon">+</span>
+        </div>
+        <div class="tile-content">
+          <div class="philosophy-content">
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">自分への戒めとして</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tile 5: Activities -->
+      <div class="bento-card activities-tile" data-type="activities">
+        <div class="tile-header">
+          <h3><strong>活動・興味・関心</strong></h3>
+          <span class="tile-action-icon">+</span>
+        </div>
+        <div class="tile-content">
+          <div class="activities-content">
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">キーワード</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tile 6: Audio -->
+      <div class="bento-card audio-tile" data-type="audio">
+        <div class="tile-header">
+          <h3><strong>音声</strong></h3>
+          <span class="tile-action-icon">+</span>
+        </div>
+        <div class="tile-content">
+          <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">AIによるサイト要約とディベート</p>
+        </div>
+      </div>
+
+      <!-- Tile 7: Message -->
+      <div class="bento-card message-tile" data-type="message">
+        <div class="tile-header">
+          <h3><strong>みなさんへ</strong></h3>
+          <span class="tile-action-icon">+</span>
+        </div>
+        <div class="tile-content">
+          <div class="message-content">
+            <p class="message-tagline">『つくる』で 暮らしを しなやかに</p>
+            <p class="message-subtitle">Imagining and Creating Better Days</p>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="bento-footer">
+    <p>&copy; <span id="current-year"></span> 成分表示 - 『つくる』アーカイブ. All rights reserved.</p>
+  </footer>
+
+  <!-- Fixed Audio Player -->
+  <div id="fixed-audio-player" class="fixed-audio-player" style="display: none;">
+    <div class="player-content">
+      <div class="player-info">
+        <span id="player-title" class="player-title">音声タイトル</span>
+        <div class="player-time-info">
+          <span id="player-time" class="player-time">0:00</span>
+          <div id="progress-bar" class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="player-controls">
+        <button id="play-pause-btn" class="play-pause-btn">▶</button>
+        <button id="close-player-btn" class="close-player-btn">×</button>
+      </div>
+    </div>
+    <audio id="audio-element"></audio>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detail-modal" class="detail-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/bento.js"></script>
+</body>
+</html>
