@@ -6,6 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="1984年から続く9業種の成分表示。『つくる』の軌跡を視覚化したプロフィールアーカイブ。" />
   
+  <!-- OGP Settings -->
+  <meta property="og:title" content="成分表示 - 『つくる』の軌跡" />
+  <meta property="og:description" content="1984年から続く9業種の成分表示。『つくる』の軌跡を視覚化したプロフィールアーカイブ。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://your-website-url.com/" /> <!-- 実際のURLに変更してください -->
+  <meta property="og:image" content="https://your-website-url.com/assets/images/ogp.jpg" /> <!-- 画像のパスに変更してください -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="成分表示 - 『つくる』の軌跡" />
+  <meta name="twitter:description" content="1984年から続く9業種の成分表示。『つくる』の軌跡を視覚化したプロフィールアーカイブ。" />
+  <meta name="twitter:image" content="https://your-website-url.com/assets/images/ogp.jpg" /> <!-- 画像のパスに変更してください -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -71,6 +82,7 @@
 
       <!-- Tile 3: 成分一覧 -->
       <div class="bento-card list-tile" data-type="list" data-id="component-list">
+        <span class="tile-bg-icon">Detail</span>
         <div class="tile-header">
           <h3>成分詳細</h3>
           <span class="tile-action-icon">+</span>
@@ -82,19 +94,21 @@
 
       <!-- Tile 4: Philosophy -->
       <div class="bento-card philosophy-tile" data-type="philosophy">
+        <span class="tile-bg-icon">Philosophy</span>
         <div class="tile-header">
           <h3><strong>基本理念</strong></h3>
           <span class="tile-action-icon">+</span>
         </div>
         <div class="tile-content">
           <div class="philosophy-content">
-            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">自分への戒めとして</p>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">自戒をこめて</p>
           </div>
         </div>
       </div>
 
       <!-- Tile 5: Activities -->
       <div class="bento-card activities-tile" data-type="activities">
+        <span class="tile-bg-icon">Activities</span>
         <div class="tile-header">
           <h3><strong>活動・興味・関心</strong></h3>
           <span class="tile-action-icon">+</span>
@@ -108,17 +122,25 @@
 
       <!-- Tile 6: Audio -->
       <div class="bento-card audio-tile" data-type="audio">
+        <span class="tile-bg-icon">Voice</span>
         <div class="tile-header">
           <h3><strong>音声</strong></h3>
           <span class="tile-action-icon">+</span>
         </div>
         <div class="tile-content">
           <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">AIによるサイト要約とディベート</p>
+          <div class="audio-visualizer">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
       </div>
 
       <!-- Tile 7: Message -->
       <div class="bento-card message-tile" data-type="message">
+        <span class="tile-bg-icon">Message</span>
         <div class="tile-header">
           <h3><strong>みなさんへ</strong></h3>
           <span class="tile-action-icon">+</span>

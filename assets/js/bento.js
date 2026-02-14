@@ -364,10 +364,7 @@ function initializeBento() {
       } else if (type === 'message') {
         openModalFor(showMessageDetail);
       } else if (type === 'list') {
-        // 行をクリックした場合は詳細表示を優先
-        if (!e.target.closest('tbody tr')) {
-          openModalFor(showListDetail);
-        }
+        openModalFor(showListDetail);
       }
     });
   });
@@ -889,9 +886,10 @@ function showPhilosophyDetail() {
   const content = `
     <div class="philosophy-detail">
       <div class="philosophy-header">
+        <h2>基本理念</h2>
         <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; margin-top: 0; font-weight: 600; line-height: 1.2;">謙虚に真摯に</h3>
-        <h3 style="color: var(--text-primary); margin-bottom: 0.2rem; margin-top: 0; font-weight: 600; line-height: 1.2;">常に新鮮であり続ける</h3>
-        <h2 style="color: var(--accent-primary); margin-bottom: 1rem; margin-top: 0; font-weight: 600; line-height: 1.2;">Like a California Roll</h2>
+        <h3 style="color: var(--text-primary); margin-bottom: 2rem; margin-top: 0; font-weight: 600; line-height: 1.2;">常に新鮮であり続ける</h3>
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem; margin-top: 0; font-weight: 600; line-height: 1.2;">Like a California Roll</h2>
         <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
           カリフォルニアロールのような仕事をしてきました。<br>
           本道ではないが味がある、異なるアプローチでも同じ価値を創造する仕事です。
@@ -904,8 +902,8 @@ function showPhilosophyDetail() {
       <div id="philosophy-full-text" style="display: none; margin-top: 2rem;">
         <hr style="border: none; border-top: 1px solid var(--border-primary); margin: 1.5rem 0;">
         
-        <h3 style="color: white; margin-bottom: 0.2rem; font-weight: 600; font-size: 1rem;">カリフォルニアロール</h3>
-        <p style="color: white; font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">或いはナポリタンという「ものづくり」について</p>
+        <h3 style="color: var(--text-primary); margin-bottom: 0.2rem; font-weight: 600; font-size: 1rem;">カリフォルニアロール</h3>
+        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">或いはナポリタンという「ものづくり」について</p>
         
         <div style="color: var(--text-secondary); line-height: 1.8;">
           <p style="margin-bottom: 1rem;">何十年も前、私が町工場で働いていたころの話です。当時お付き合いのあった、世界の巨人と呼ばれていた企業の営業責任者から、こんな言葉を浴びせられました。</p>
@@ -971,6 +969,7 @@ function playAudio(type) {
   const playerTime = document.getElementById('player-time');
   const progressBar = document.getElementById('progress-bar');
   const progressFill = document.getElementById('progress-fill');
+  const visualizer = document.querySelector('.audio-visualizer');
   
   if (!fixedPlayer || !audioElement || !playerTitle || !playPauseBtn) return;
   
@@ -1016,6 +1015,11 @@ function playAudio(type) {
       currentAudio = audioElement;
       console.log('音声再生開始');
       
+      // ビジュアライザーを活性化
+      if (visualizer) {
+        visualizer.classList.add('playing');
+      }
+      
       // 再生開始時にモーダルを閉じる
       _hideModal();
     }).catch(error => {
@@ -1053,6 +1057,7 @@ function initializeAudioPlayer() {
   const playerTime = document.getElementById('player-time');
   const progressBar = document.getElementById('progress-bar');
   const progressFill = document.getElementById('progress-fill');
+  const visualizer = document.querySelector('.audio-visualizer');
   
   if (!audioElement || !playPauseBtn || !closePlayerBtn || !playerTime) return;
   
@@ -1060,9 +1065,11 @@ function initializeAudioPlayer() {
   playPauseBtn.addEventListener('click', () => {
     if (audioElement.paused) {
       audioElement.play();
+      if(visualizer) visualizer.classList.add('playing');
       playPauseBtn.textContent = '⏸';
     } else {
       audioElement.pause();
+      if(visualizer) visualizer.classList.remove('playing');
       playPauseBtn.textContent = '▶';
     }
   });
@@ -1073,6 +1080,7 @@ function initializeAudioPlayer() {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       currentAudio = null;
+      if(visualizer) visualizer.classList.remove('playing');
     }
     document.getElementById('fixed-audio-player').style.display = 'none';
     playPauseBtn.textContent = '▶';
@@ -1130,6 +1138,7 @@ function initializeAudioPlayer() {
   // 再生終了
   audioElement.addEventListener('ended', () => {
     playPauseBtn.textContent = '▶';
+    if(visualizer) visualizer.classList.remove('playing');
     playerTime.textContent = '0:00';
     if (progressFill) {
       progressFill.style.width = '0%';
