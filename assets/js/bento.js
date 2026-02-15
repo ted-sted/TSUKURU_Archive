@@ -2,147 +2,6 @@
 // BENTO STYLE DASHBOARD JAVASCRIPT
 // ===================================
 
-// Career Data
-const careerData = {
-  'career-food': {
-    title: '洋食調理スタッフ',
-    period: '1984/4/1 〜 1991/1/31',
-    days: 2496,
-    description: `
-      <p>全くの素人から洋食調理全般を習得。カフェバー業態立上げをコンサルと協働。</p>
-      <p>6店舗を経験し、「でもしか商売」から専門職への業界変革を最前線で体験。</p>
-      <p>芝生（中曽根商事）で洋食の基礎を習得、Vert Pointではカフェバー業態立上げを飲食店コンサルと協働。</p>
-      <p>BEI RUDI勤務時には副業で清掃サービス事業を展開し、顧客から出資話も。</p>
-      <p>調理とはものづくりであり、ここで身に付けた思考方法がその後のキャリアすべてに影響。</p>
-      <p>バブルで業界が変容し転職を決意。</p>
-      <p>シグマとの意外な接点として、中曽根商事にはシグマ会長／社長がコマツソフト時代に開発した店舗SOLが後に導入されることに。</p>
-    `,
-    details: [
-      '6店舗（芝生、Vert Point、CASA、銀座ライオン、BEI RUDI、LA JOLLA）',
-      'バブル期飲食業界変革を経験',
-      '副業で清掃サービス事業を展開'
-    ]
-  },
-  'career-system': {
-    title: '流通店舗向けシステム開発',
-    period: '1991/2/1 〜 1995/9/30',
-    days: 1702,
-    description: `
-      <p>未経験プログラマーから技術習得。画期的な小売店向け店舗本部間システム開発。</p>
-      <p>PC-9800シリーズ、MS-DOS、C言語時代。技術習得の過程で、IT業界の将来性と可能性に気づく。</p>
-      <p>この経験がその後のキャリア全体に影響を与える。</p>
-    `,
-    details: [
-      'アドバンストシステムエンジニアリング（東京都千代田区）',
-      'IT黎明期のベンチャー挑戦',
-      'PC-9800シリーズ、MS-DOS、C言語時代'
-    ]
-  },
-  'career-store': {
-    title: '店舗什器板金製造',
-    period: '1995/10/1 〜 2005/6/30',
-    days: 3530,
-    description: `
-      <p>営業から製造現場、経営まで幅広く経験。店舗什器の設計・製造・施工まで一貫して携わる。</p>
-      <p>金属加工、塗装、組立、現場施工まで、ものづくりの全工程を学ぶ。</p>
-      <p>お客様との直接対話で、現場の声を製品開発に反映させる重要性を学ぶ。</p>
-      <p>この経験が、その後のサービス開発の基礎となる。</p>
-    `,
-    details: [
-      'ナビ工業（東京都大田区）',
-      'ものづくりの原点を経験',
-      '営業から製造現場、経営まで幅広く経験'
-    ]
-  },
-  'career-retail': {
-    title: 'リテールソリューション営業',
-    period: '2005/7/1 〜 2008/8/31',
-    days: 1156,
-    description: `
-      <p>小売店向けPOSシステム導入・サポート。店舗運営の課題解決を通じて、お客様の事業成功に貢献。</p>
-      <p>ITと現場の橋渡し役として、技術とビジネスの両面からアプローチ。</p>
-    `,
-    details: [
-      'シグマ（東京都千代田区）',
-      '小売業界のIT化を推進',
-      'ITと現場の橋渡し役'
-    ]
-  },
-  'career-finance': {
-    title: '金融機器導入スケジュール管理',
-    period: '2008/9/1 〜 2012/2/29',
-    days: 1278,
-    description: `
-      <p>金融機関向けATM導入プロジェクト管理。厳密なスケジュール管理と品質管理の重要性を学ぶ。</p>
-      <p>大規模プロジェクトの調整・実行能力を養う。</p>
-    `,
-    details: [
-      '金融機器専門会社',
-      'プロジェクト管理の専門性を習得',
-      '厳密なスケジュール管理と品質管理'
-    ]
-  },
-  'career-wood': {
-    title: '木工小物製造',
-    period: '2012/3/1 〜 2014/2/28',
-    days: 730,
-    description: `
-      <p>木工小物の製造・販売。伝統的な木工技術と現代的なデザインの融合。</p>
-      <p>手仕事の価値と、ものづくりの喜びを再確認。</p>
-    `,
-    details: [
-      '個人事業主',
-      '伝統工芸との出会い',
-      '手仕事の価値を再確認'
-    ]
-  },
-  'career-light': {
-    title: '照明器具製造',
-    period: '2014/3/1 〜 2018/8/31',
-    days: 1884,
-    description: `
-      <p>照明器具の設計・製造。光が空間と人に与える影響を学ぶ。</p>
-      <p>技術とデザインの融合を追求。</p>
-    `,
-    details: [
-      '照明器具専門メーカー',
-      '光と空間のデザインを学ぶ',
-      '技術とデザインの融合を追求'
-    ]
-  },
-  'career-auto': {
-    title: '自動車カスタムパーツデザイン製造',
-    period: '2018/9/1 〜 2021/9/10',
-    days: 893,
-    description: `
-      <p>自動車カスタムパーツの設計・製造。デザイン性と機能性の両立を追求。</p>
-      <p>3D CAD技術を習得し、デジタルものづくりの可能性を学ぶ。</p>
-    `,
-    details: [
-      '自動車関連メーカー',
-      'デザインと製造の融合',
-      '3D CAD技術を習得'
-    ]
-  },
-  'career-azen': {
-    title: 'A-Zen',
-    period: '2021/9/11 〜 現在',
-    days: '現在進行中',
-    description: `
-      <p>新規事業としてA-Zenサービスを運営。</p>
-      <p>「店舗まるごと整える！」をスローガンに、ITサポート＋店舗什器のお困りごと解決サービスを提供。</p>
-      <p>什器や設備の（提案／製造を含めた）営繕を請け負い、大手什器メーカーが対応できない細かなカスタマイズなどに対応。</p>
-      <p>これまで携わってきた外食・システム・製造などの知識・経験・人脈などすべてが活かされ、現在・過去の経験がマージされ、個別に切り分けて評価するのが難しいほど統合されている。</p>
-      <p>ナビ工業時代に会長と面接採用した製造責任者を、A-Zenスタッフとして迎え入れる。</p>
-    `,
-    details: [
-      '個人事業主',
-      'キャリアの集大成',
-      'すべての経験を統合'
-    ]
-  }
-};
-
 // Chart Data
 const chartData = {
   labels: [
@@ -302,15 +161,6 @@ function initializeBento() {
   const azenSpan = calculateSpan(2021, 9, 11);
   chartData.data[8] = azenSpan.totalDays; // A-Zenの日数を更新
   
-  // Update career data
-  careerData['career-azen'].days = azenSpan.totalDays;
-  
-  // Update A-Zen card display
-  const azenCard = document.querySelector('[data-id="career-azen"] .card-days');
-  if (azenCard) {
-    azenCard.textContent = `${azenSpan.totalDays.toLocaleString()}日`;
-  }
-  
   // Update header stats
   const careerSpan = calculateSpan(1984, 4, 1);
   
@@ -346,13 +196,7 @@ function initializeBento() {
       const type = card.dataset.type;
       const id = card.dataset.id;
       
-      if (type === 'career' && id && careerData[id]) {
-        openModalFor(() => showCareerDetail(careerData[id]));
-      } else if (type === 'hero') {
-        openModalFor(showHeroDetail);
-      } else if (type === 'product') {
-        openModalFor(showProductDetail);
-      } else if (type === 'chart') {
+      if (type === 'chart') {
         const chartType = card.dataset.chart;
         openModalFor(() => showChartDetail(chartType));
       } else if (type === 'philosophy') {
@@ -414,80 +258,31 @@ function initializeBento() {
   }
 }
 
-// Show career detail
-function showCareerDetail(data) {
-  const modalBody = document.getElementById('modal-body');
-  if (!modalBody) return;
-  
-  modalBody.innerHTML = `
-    <h2>${data.title}</h2>
-    <p><strong>期間：</strong>${data.period}</p>
-    <p><strong class="days-label">日数：</strong><span class="days-value">${data.days}</span>日</p>
-    ${data.description}
-    ${data.details && data.details.length > 0 ? `
-      <h3>詳細情報</h3>
-      <ul>
-        ${data.details.map(detail => `<li>${detail}</li>`).join('')}
-      </ul>
-    ` : ''}
-  `;
-}
-
-// Show hero detail
-function showHeroDetail() {
-  const modalBody = document.getElementById('modal-body');
-  if (!modalBody) return;
-  
-  const careerSpan = calculateSpan(1984, 4, 1);
-  
-  modalBody.innerHTML = `
-    <h2>何をやっている人？ を廻る混迷</h2>
-    <p>1984年から40年以上にわたり、9つの異なる業種で「ものづくり」に携わってきました。</p>
-    <p>料理人からプログラマー、製造業、そして現在のA-Zenまで、一見すると脈絡のないような経歴に見えるかもしれません。</p>
-    <p>しかし、すべては「ものづくり」という共通のテーマで繋がっています。それぞれの経験が、次のステップへの糧となり、現在の私を形作っています。</p>
-    <h3>キャリア概要</h3>
-    <ul>
-      <li>成分：<span class="percentage-value">9</span>業種</li>
-      <li>累計日数：<span class="days-value">${careerSpan.totalDays.toLocaleString()}</span>日</li>
-      <li>キャリア期間：<span class="years-value">${careerSpan.years}</span>年<span class="years-value">${careerSpan.months}</span>ヶ月<span class="years-value">${careerSpan.days}</span>日</li>
-    </ul>
-    <p>この「成分表示」が、皆さんの何かの参考になれば幸いです。</p>
-  `;
-}
-
-// Show product detail
-function showProductDetail() {
-  const modalBody = document.getElementById('modal-body');
-  if (!modalBody) return;
-  
-  modalBody.innerHTML = `
-    <h2>基本理念</h2>
-    <h3>謙虚に真摯に<br>常に新鮮であり続ける</h3>
-    <p>この二つは、私がものづくりで最も大切にしている価値観です。</p>
-    <h3>Like a California Roll</h3>
-    <p>カリフォルニアロールのような仕事をしてきました。本道ではないが味がある、異なるアプローチでも同じ価値を創造する仕事です。</p>
-    <p>何十年も前、町工場で働いていたとき、世界の巨人と呼ばれる企業の営業責任者から「お前らと俺たちを一緒にするな！お前らの作るものは、本物ではない！」と言われました。</p>
-    <p>しかし、仕事には「端っこ」も「片隅」もありません。私たちが立っている場所こそが、いつだって自分たちの世界の真ん中です。</p>
-    <p>これからも、私なりのカリフォルニアロールを真剣に作り続けていきます。</p>
-  `;
-}
-
 // Show activities detail
 function showActivitiesDetail() {
   const modalBody = document.getElementById('modal-body');
   if (!modalBody) return;
 
+  const activities = [
+    { text: '店舗まるごと整える！', desc: '什器・設備の制作から、システム関連の導入・管理・保守まで対応いたします。\n状況に合わせたベストなご提案を差し上げます。お気軽にご相談、ご用命ください！' },
+    { text: 'デコランタンワークショップ開催', desc: 'あかり ＋ ものづくり ＝ デコランタン\n"かんたん！かわいい！きれい！" を合言葉に自分だけのランタンを作りましょう。\n\n身の周りにある物や簡単に手に入れられる材料を使って「あかり」と「ものづくり」を楽しむ、ものづくりワークショップです。ご興味ありましたら、お声掛けください。出張もオンラインも開催可能です。' },
+    { text: '製造やアートの展示や現場に行く', desc: '工場も美術館も博物館も\n百聞は一見に如かず\n現場からしか摂取できない栄養がある' },
+    { text: '気になるイベントに参加する', desc: '分野を限らず\n思い立ったが吉日\n予定を立てると忘れがち' },
+    { text: '楽しく美味しく飲み食べる', desc: 'おいしいものが好き\n楽しい時間が好き\n最近は日本酒多め' },
+    { text: '銭湯に浸かる', desc: '銭湯も温泉も\n熱めより温め\n出先でも時間を作って湯ったり！' },
+    { text: 'ランニングという名の徘徊をする', desc: '練習は短くイメトレ多用\n距離：トレーニング ＜ レース（ハーフ限界）\n齢には抗えず…' }
+  ];
+
   modalBody.innerHTML = `
     <h2>活動・興味・関心</h2>
-    <ul style="list-style: none; padding: 0; color: var(--text-secondary); line-height: 1.8; font-size: 1rem;">
-      <li>・店舗まるごと整える！</li>
-      <li>・デコランタンワークショップ（ものづくりWS）を開催する</li>
-      <li>・楽しく美味しく飲み食べる</li>
-      <li>・銭湯に浸かる</li>
-      <li>・製造やアートの展示や現場に行く</li>
-      <li>・気になるイベントに参加する</li>
-      <li>・ランニングという名の徘徊をする</li>
+    <ul class="activities-list">
+      ${activities.map(item => `
+        <li class="activity-item" data-tooltip='${item.desc}'>
+          ・${item.text}
+        </li>
+      `).join('')}
     </ul>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem;">※各項目にカーソルを合わせると詳細が表示されます。</p>
   `;
 }
 
@@ -598,7 +393,7 @@ function getComponentListTableHTML() {
 
     tableHTML += `
       <tr onclick="handleComponentRowClick(${index})" data-index="${index}">
-        <td class="industry-name">
+        <td class="industry-name" style="color: ${color};">
           <span class="color-indicator" style="display: inline-block; width: 8px; height: 8px; background: ${color}; border-radius: 50%; margin-right: 8px;"></span>
           ${label}
         </td>
@@ -991,7 +786,6 @@ function playAudio(type) {
   }
   
   console.log(`音声ファイルパス: ${audioSrc}`);
-  
   // プレーヤー情報を設定
   playerTitle.textContent = title;
   audioElement.src = audioSrc;
@@ -1415,20 +1209,16 @@ function _hideModal() {
 
 // Initialize Charts
 function initializeCharts() {
-  console.log('Initializing charts...');
-  
   // Check if Chart.js is loaded
   if (typeof Chart === 'undefined') {
     console.error('Chart.js is not loaded');
     return;
   }
-  console.log('Chart.js is loaded');
   
   // Calculate A-Zen days first
   const azenSpan = calculateSpan(2021, 9, 11);
   const currentData = [...chartData.data];
   currentData[8] = azenSpan.totalDays;
-  console.log('Current data:', currentData);
   
   // Create sorted data for pie chart (descending order)
   const sortedIndices = currentData
@@ -1443,7 +1233,6 @@ function initializeCharts() {
   // Bar Chart
   const barCtx = document.getElementById('barChart');
   if (barCtx) {
-    console.log('Creating bar chart...');
     try {
       const barChart = new Chart(barCtx, {
         type: 'bar',
@@ -1494,7 +1283,6 @@ function initializeCharts() {
           }
         }
       });
-      console.log('Bar chart created successfully');
     } catch (error) {
       console.error('Error creating bar chart:', error);
     }
@@ -1505,7 +1293,6 @@ function initializeCharts() {
   // Pie Chart (sorted by days, clockwise)
   const pieCtx = document.getElementById('pieChart');
   if (pieCtx) {
-    console.log('Creating pie chart...');
     try {
       const pieChart = new Chart(pieCtx, {
         type: 'doughnut',
@@ -1545,7 +1332,6 @@ function initializeCharts() {
           circumference: 360
         }
       });
-      console.log('Pie chart created successfully');
     } catch (error) {
       console.error('Error creating pie chart:', error);
     }

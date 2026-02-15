@@ -822,62 +822,6 @@ body {
   opacity: 1;
 }
 
-/* Card Types */
-.hero-card {
-  grid-column: span 2;
-  background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
-  border: 1px solid var(--border-secondary);
-}
-
-.hero-card h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-card p {
-  color: var(--text-secondary);
-  font-size: 1rem;
-}
-
-.career-card {
-  position: relative;
-}
-
-.career-card .card-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  filter: grayscale(1);
-  transition: filter var(--transition-normal);
-}
-
-.career-card:hover .card-icon {
-  filter: grayscale(0);
-}
-
-.career-card h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-}
-
-.career-card p {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  margin-bottom: 0.25rem;
-}
-
-.career-card .card-days {
-  font-weight: 600;
-  color: var(--accent-primary);
-  margin-top: 0.5rem;
-}
-
 .chart-card {
   grid-column: span 2;
 }
@@ -892,61 +836,6 @@ body {
 .chart-container {
   height: 250px;
   position: relative;
-}
-
-.product-card {
-  background: linear-gradient(135deg, var(--bg-card), rgba(59, 130, 246, 0.1));
-  border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-.product-card h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: var(--accent-primary);
-}
-
-.product-card p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* Data Tables */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.data-table th,
-.data-table td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border-primary);
-}
-
-.data-table th {
-  background: var(--bg-secondary);
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.875rem;
-}
-
-.data-table td {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.data-table tr:last-child td {
-  border-bottom: none;
-}
-
-.data-table tr:hover {
-  background: var(--bg-card-hover);
 }
 
 /* Detail Modal */
@@ -1129,15 +1018,19 @@ body {
 .audio-visualizer span {
   display: block;
   width: 4px;
-  background: var(--accent-primary);
   border-radius: 2px;
-  animation: visualize 1s ease-in-out infinite;
+  animation: visualize 2.5s ease-in-out infinite;
 }
 
-.audio-visualizer span:nth-child(1) { height: 40%; animation-delay: 0.0s; }
-.audio-visualizer span:nth-child(2) { height: 70%; animation-delay: 0.1s; background: var(--accent-secondary); }
-.audio-visualizer span:nth-child(3) { height: 50%; animation-delay: 0.2s; }
-.audio-visualizer span:nth-child(4) { height: 80%; animation-delay: 0.3s; background: var(--accent-secondary); }
+.audio-visualizer span:nth-child(1) { height: 40%; animation-delay: 0.0s; background-color: #055584; }
+.audio-visualizer span:nth-child(2) { height: 70%; animation-delay: 0.2s; background-color: #459cce; }
+.audio-visualizer span:nth-child(3) { height: 50%; animation-delay: 0.4s; background-color: #84bcda; }
+.audio-visualizer span:nth-child(4) { height: 80%; animation-delay: 0.1s; background-color: #9ebea7; }
+.audio-visualizer span:nth-child(5) { height: 60%; animation-delay: 0.5s; background-color: #b8c073; }
+.audio-visualizer span:nth-child(6) { height: 90%; animation-delay: 0.3s; background-color: #ecc30b; }
+.audio-visualizer span:nth-child(7) { height: 45%; animation-delay: 0.6s; background-color: #f09d2a; }
+.audio-visualizer span:nth-child(8) { height: 75%; animation-delay: 0.2s; background-color: #f37748; }
+.audio-visualizer span:nth-child(9) { height: 55%; animation-delay: 0.4s; background-color: #d56062; }
 
 @keyframes visualize {
   0%, 100% {
@@ -1409,3 +1302,59 @@ body {
 .modal-body ul li:nth-child(5), .modal-body table tbody tr:nth-child(5) { animation-delay: 0.4s; }
 .modal-body ul li:nth-child(6), .modal-body table tbody tr:nth-child(6) { animation-delay: 0.45s; }
 .modal-body ul li:nth-child(n+7), .modal-body table tbody tr:nth-child(n+7) { animation-delay: 0.5s; }
+
+/* --- Activities Tooltip --- */
+.activities-list {
+  list-style: none;
+  padding: 0;
+  color: var(--text-secondary);
+  line-height: 2;
+  font-size: 1rem;
+  position: relative;
+  z-index: 10; /* 下の説明文より手前に表示させるため */
+}
+
+.activity-item {
+  position: relative;
+  cursor: help;
+  width: fit-content;
+  transition: color 0.2s ease;
+}
+
+.activity-item:hover {
+  color: var(--text-primary);
+  z-index: 10;
+}
+
+.activity-item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%; /* 下に表示 */
+  bottom: auto;
+  left: 0;
+  background: #111111; /* 背景を完全に不透明な色に固定 */
+  color: var(--text-primary);
+  padding: 0.8rem 1rem; /* 余白を広げる */
+  border-radius: 4px;
+  font-size: 0.9rem; /* 文字サイズを微調整 */
+  white-space: pre-wrap;
+  width: max-content;
+  max-width: 300px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8); /* 影を濃くして浮き出しを強調 */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-5px); /* 下からふわっと出るように調整 */
+  transition: all 0.2s ease;
+  z-index: 9999; /* 確実に最前面に表示 */
+  pointer-events: none;
+  margin-top: 0.5rem; /* テキストとの間隔 */
+  margin-bottom: 0;
+  line-height: 1.6; /* 行間を広げる */
+}
+
+.activity-item:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
