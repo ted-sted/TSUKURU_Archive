@@ -231,6 +231,27 @@ function initializeBento() {
         navigateBackModal();
       }
     });
+    
+    // Swipe to close (Right swipe)
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    modal.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    modal.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > Math.abs(diffY) && diffX > 50) {
+        navigateBackModal();
+      }
+    }, { passive: true });
   }
   
   // Initialize component list
