@@ -1528,6 +1528,565 @@ function initializeCharts() {
   }
 }
 
+// ============================================================
+// ② 来訪者の成分比較機能
+// ============================================================
+
+const quizQuestions = [
+  {
+    id: 'domain', question: 'メインの仕事領域は？', multiple: false,
+    options: [
+      { label: 'IT・システム開発', value: 'it', icon: '💻' },
+      { label: 'ものづくり・製造', value: 'manufacturing', icon: '🔧' },
+      { label: '飲食・サービス', value: 'food', icon: '🍽️' },
+      { label: '営業・マーケ', value: 'sales', icon: '📊' },
+      { label: 'デザイン・クリエイティブ', value: 'creative', icon: '🎨' },
+      { label: '管理・経営', value: 'management', icon: '📋' },
+      { label: '教育・医療・福祉', value: 'care', icon: '🏥' },
+      { label: 'その他・複合', value: 'other', icon: '✨' }
+    ]
+  },
+  {
+    id: 'years', question: '総キャリア年数は？', multiple: false,
+    options: [
+      { label: '〜5年', value: 'short', icon: '🌱' },
+      { label: '5〜15年', value: 'mid', icon: '🌿' },
+      { label: '15〜30年', value: 'long', icon: '🌳' },
+      { label: '30年以上', value: 'veteran', icon: '🏆' }
+    ]
+  },
+  {
+    id: 'strength', question: '得意なことは？（複数選択可）', multiple: true,
+    options: [
+      { label: '手を動かす・つくる', value: 'making', icon: '🛠️' },
+      { label: '仕組みを設計する', value: 'system', icon: '⚙️' },
+      { label: 'チームをまとめる', value: 'lead', icon: '👥' },
+      { label: 'アイデアを発想する', value: 'idea', icon: '💡' },
+      { label: '数字で考える', value: 'logic', icon: '📐' },
+      { label: 'お客様と向き合う', value: 'client', icon: '🤝' }
+    ]
+  },
+  {
+    id: 'style', question: 'キャリアスタイルは？', multiple: false,
+    options: [
+      { label: '1つを深く掘る専門職型', value: 'specialist', icon: '🎯' },
+      { label: '幅広いゼネラリスト型', value: 'generalist', icon: '🌐' },
+      { label: 'つくるのような〝転々型〟', value: 'wanderer', icon: '🚀' }
+    ]
+  }
+];
+
+let quizCurrentStep = 0;
+let quizAnswers = {};
+
+function startComparison() {
+  quizCurrentStep = 0;
+  quizAnswers = {};
+  openModalFor(() => renderQuizStep(0));
+}
+
+function renderQuizStep(step) {
+  quizCurrentStep = step;
+  const q = quizQuestions[step];
+  const total = quizQuestions.length;
+  const modalBody = document.getElementById('modal-body');
+  if (!modalBody) return;
+
+  modalBody.innerHTML = `
+    <div class="quiz-container">
+      <div class="quiz-progress">
+        ${Array.from({ length: total }, (_, i) =>
+    `<div class="quiz-dot ${i < step ? 'done' : i === step ? 'active' : ''}"></div>`
+  ).join('')}
+      </div>
+      <p class="quiz-step-label">Q${step + 1} / ${total}</p>
+      <h2 class="quiz-question">${q.question}</h2>
+      <p class="quiz-hint">${q.multiple ? '複数選択できます' : '1つ選んでください'}</p>
+      <div class="quiz-options">
+        ${q.options.map(opt => `
+          <button class="quiz-option-btn" id="qopt-${opt.value}"
+            onclick="selectQuizAnswer('${q.id}','${opt.value}',${q.multiple},${step})">
+            <span class="quiz-option-icon">${opt.icon}</span>
+            <span class="quiz-option-label">${opt.label}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-nav">
+        ${step > 0
+      ? `<button class="quiz-back-btn" onclick="renderQuizStep(${step - 1})">← 戻る</button>`
+      : '<div></div>'}
+        ${q.multiple
+      ? `<button class="quiz-next-btn" id="quiz-next-btn"
+               onclick="advanceQuiz(${step})" disabled>次へ →</button>`
+      : '<div></div>'}
+      </div>
+    </div>
+  `;
+
+  // 前の選択を復元
+  if (quizAnswers[q.id]) {
+    const prev = Array.isArray(quizAnswers[q.id]) ? quizAnswers[q.id] : [quizAnswers[q.id]];
+    prev.forEach(val => {
+      const btn = document.getElementById(`qopt-${val}`);
+      if (btn) btn.classList.add('selected');
+    });
+    if (q.multiple) {
+      const next = document.getElementById('quiz-next-btn');
+      if (next) next.disabled = false;
+    }
+  }
+}
+
+function selectQuizAnswer(questionId, value, multiple, step) {
+  if (multiple) {
+    if (!quizAnswers[questionId]) quizAnswers[questionId] = [];
+    const arr = quizAnswers[questionId];
+    const idx = arr.indexOf(value);
+    const btn = document.getElementById(`qopt-${value}`);
+    if (idx === -1) { arr.push(value); if (btn) btn.classList.add('selected'); }
+    else { arr.splice(idx, 1); if (btn) btn.classList.remove('selected'); }
+    const next = document.getElementById('quiz-next-btn');
+    if (next) next.disabled = arr.length === 0;
+  } else {
+    quizAnswers[questionId] = value;
+    const btn = document.getElementById(`qopt-${value}`);
+    if (btn) btn.classList.add('selected');
+    setTimeout(() => advanceQuiz(step), 260);
+  }
+}
+
+function advanceQuiz(step) {
+  if (step + 1 < quizQuestions.length) {
+    renderQuizStep(step + 1);
+  } else {
+    showAnalyzing();
+  }
+}
+
+function showAnalyzing() {
+  const modalBody = document.getElementById('modal-body');
+  if (!modalBody) return;
+  modalBody.innerHTML = `
+    <div class="quiz-analyzing">
+      <div class="analyzing-spinner"></div>
+      <p class="analyzing-text">成分を分析中...</p>
+      <p class="analyzing-sub">あなたと『つくる』の成分を照合しています</p>
+    </div>
+  `;
+  setTimeout(() => {
+    const result = calculateComparison();
+    renderComparisonResult(result);
+  }, 2000);
+}
+
+function calculateComparison() {
+  const { domain, years, strength, style } = quizAnswers;
+  const azenDays = calculateSpan(2021, 9, 11).totalDays;
+  const currentData = [...chartData.data];
+  currentData[8] = azenDays;
+
+  // 制作者の5大カテゴリー
+  const creatorProfile = {
+    food: { label: '食・サービス', days: currentData[0], color: chartData.colors[0] },
+    it: { label: 'IT・システム', days: currentData[1], color: chartData.colors[1] },
+    manufacturing: { label: 'ものづくり・製造', days: currentData[2] + currentData[5] + currentData[6] + currentData[7], color: '#7a9cbf' },
+    sales: { label: '営業・ソリューション', days: currentData[3], color: chartData.colors[3] },
+    management: { label: '管理・プロジェクト', days: currentData[4], color: chartData.colors[4] },
+    creative: { label: 'クリエイティブ', days: currentData[8], color: chartData.colors[8] }
+  };
+  const totalCreatorDays = Object.values(creatorProfile).reduce((s, c) => s + c.days, 0);
+
+  // 来訪者のカテゴリーウェイト
+  const vW = { food: 0, it: 0, manufacturing: 0, sales: 0, management: 0, creative: 0 };
+  if (domain) { if (vW[domain] !== undefined) vW[domain] += 3; }
+  if (strength && Array.isArray(strength)) {
+    const map = { making: 'manufacturing', system: 'it', lead: 'management', idea: 'creative', logic: 'management', client: 'sales' };
+    strength.forEach(s => { const cat = map[s]; if (cat) vW[cat] += 1; });
+  }
+
+  // マッチスコア計算
+  let matchDays = 0;
+  const matched = [], complement = [];
+  Object.entries(creatorProfile).forEach(([cat, info]) => {
+    if ((vW[cat] || 0) > 0) { matchDays += info.days; matched.push({ ...info, cat }); }
+    else { complement.push({ ...info, cat }); }
+  });
+
+  let score = (matchDays / totalCreatorDays) * 100;
+  if (style === 'wanderer') score = Math.min(score + 20, 99);
+  else if (style === 'generalist') score = Math.min(score + 10, 99);
+  if (years === 'veteran') score = Math.min(score + 5, 99);
+  score = Math.round(score);
+
+  const stars = score >= 85 ? 5 : score >= 70 ? 4 : score >= 55 ? 3 : score >= 40 ? 2 : 1;
+  const msgs = [
+    { min: 85, title: '驚くほど似た成分構成！', body: '業界は違えど、あなたと『つくる』は同じDNAで動いています。一緒に仕事をしたら化学反応が起きるはず。' },
+    { min: 70, title: '共通のDNAで繋がれる関係', body: 'キャリアの核心に共鳴するものがあります。互いの経験を語り合うと面白い発見がありそうです。' },
+    { min: 55, title: '補完し合える組み合わせ', body: '異なる強みが補い合う関係性。あなたが持つものと『つくる』が持つものを合わせると、大きな力になります。' },
+    { min: 40, title: '異なる強みを持つ存在', body: 'バックグラウンドは違いますが、だからこそ新鮮な視点を交換できます。異業種こそが刺激の源。' },
+    { min: 0, title: 'まったく異なる成分の持ち主', body: 'ここまで違う成分は逆に貴重！互いの世界を見せ合う対話は、新しい発見に満ちているはずです。' }
+  ];
+  const msg = msgs.find(m => score >= m.min);
+
+  // 来訪者ドーナツ用データを生成
+  const visitorChart = Object.entries(vW)
+    .filter(([, v]) => v > 0)
+    .map(([cat, v]) => ({ label: creatorProfile[cat].label, value: v, color: creatorProfile[cat].color }));
+  if (visitorChart.length === 0)
+    visitorChart.push({ label: 'ユニークな領域', value: 1, color: '#888' });
+
+  return { score, stars, msg, matched, complement, visitorChart, creatorProfile };
+}
+
+function renderComparisonResult(result) {
+  const modalBody = document.getElementById('modal-body');
+  if (!modalBody) return;
+  const { score, stars, msg, matched, complement, visitorChart, creatorProfile } = result;
+  const starsHtml = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+
+  modalBody.innerHTML = `
+    <div class="comparison-result">
+      <h2 class="comp-title">成分比較 結果</h2>
+      <div class="comp-score-wrap">
+        <div class="comp-stars">${starsHtml}</div>
+        <div class="comp-score">${score}<span class="comp-score-unit">%</span></div>
+        <div class="comp-msg-title">${msg.title}</div>
+      </div>
+      <div class="comp-charts-wrap">
+        <div class="comp-chart-box">
+          <p class="comp-chart-label">あなたの成分</p>
+          <canvas id="visitorDonut" width="150" height="150"></canvas>
+        </div>
+        <div class="comp-vs">VS</div>
+        <div class="comp-chart-box">
+          <p class="comp-chart-label">『つくる』の成分</p>
+          <canvas id="creatorDonut" width="150" height="150"></canvas>
+        </div>
+      </div>
+      <p class="comp-msg-body">${msg.body}</p>
+      ${matched.length > 0 ? `
+        <div class="comp-section">
+          <h4>🔗 共通成分</h4>
+          <div class="comp-tags">
+            ${matched.map(c => `<span class="comp-tag matched" style="border-color:${c.color};color:${c.color}">${c.label}</span>`).join('')}
+          </div>
+        </div>` : ''}
+      ${complement.length > 0 ? `
+        <div class="comp-section">
+          <h4>⚡ 補完し合える成分</h4>
+          <div class="comp-tags">
+            ${complement.map(c => `<span class="comp-tag">${c.label}</span>`).join('')}
+          </div>
+        </div>` : ''}
+      <button class="comp-retry-btn" onclick="startComparison()">もう一度分析する</button>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const vCtx = document.getElementById('visitorDonut');
+    if (vCtx) new Chart(vCtx, {
+      type: 'doughnut',
+      data: { labels: visitorChart.map(d => d.label), datasets: [{ data: visitorChart.map(d => d.value), backgroundColor: visitorChart.map(d => d.color), borderColor: '#1a1a1a', borderWidth: 2 }] },
+      options: { responsive: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.label } } }, cutout: '62%' }
+    });
+    const cats = Object.values(creatorProfile);
+    const cCtx = document.getElementById('creatorDonut');
+    if (cCtx) new Chart(cCtx, {
+      type: 'doughnut',
+      data: { labels: cats.map(c => c.label), datasets: [{ data: cats.map(c => c.days), backgroundColor: cats.map(c => c.color), borderColor: '#1a1a1a', borderWidth: 2 }] },
+      options: { responsive: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => { const tot = cats.reduce((s, c) => s + c.days, 0); return ctx.label + ': ' + ((ctx.parsed / tot * 100).toFixed(1)) + '%'; } } } }, cutout: '62%' }
+    });
+  }, 100);
+}
+
+// ============================================================
+// ③ 成分タイムライン機能
+// ============================================================
+
+function _tlParseDate(str) {
+  const p = str.trim().split('/');
+  return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+}
+
+function _buildTlItems() {
+  const today = new Date();
+  const azenDays = calculateSpan(2021, 9, 11).totalDays;
+  const cd = [...chartData.data]; cd[8] = azenDays;
+  return chartData.labels.map((label, i) => {
+    let start, end;
+    if (i === 8) { start = new Date(2021, 8, 11); end = today; }
+    else { const pts = chartData.periods[i].split(' 〜 '); start = _tlParseDate(pts[0]); end = _tlParseDate(pts[1]); }
+    return { label, start, end, color: chartData.colors[i], index: i, days: cd[i] };
+  });
+}
+
+function showTimeline() {
+  const items = _buildTlItems();
+  const totalStart = items[0].start;
+  const totalEnd = new Date();
+  const totalMs = totalEnd - totalStart;
+
+  items.forEach(it => {
+    it.leftPct = ((it.start - totalStart) / totalMs) * 100;
+    it.widthPct = ((it.end - totalStart) / totalMs) * 100 - it.leftPct;
+  });
+
+  // 年ラベル（4年ごと）
+  const startYear = totalStart.getFullYear();
+  const endYear = totalEnd.getFullYear();
+  const yearLabels = [];
+  for (let y = Math.ceil(startYear / 4) * 4; y <= endYear; y += 4) {
+    const pct = ((new Date(y, 0, 1) - totalStart) / totalMs) * 100;
+    if (pct >= 0 && pct <= 100) yearLabels.push({ year: y, pct });
+  }
+
+  const modalBody = document.getElementById('modal-body');
+  if (!modalBody) return;
+
+  modalBody.innerHTML = `
+    <div class="tl-container">
+      <div class="tl-header">
+        <h2 class="tl-title">成分タイムライン</h2>
+        <p class="tl-subtitle">${startYear}年 〜 現在 ／ キャリアを時間軸で辿る</p>
+      </div>
+      <div class="tl-controls">
+        <button class="tl-play-btn" id="tl-play-btn" onclick="toggleTimelinePlay()">▶ 再生</button>
+        <span class="tl-year-display" id="tl-year-display">${startYear}年</span>
+      </div>
+      <div class="tl-chart-wrap">
+        <div class="tl-axis">
+          ${yearLabels.map(l => `<div class="tl-year-label" style="left:${l.pct.toFixed(2)}%">${l.year}</div>`).join('')}
+        </div>
+        <div class="tl-bars" id="tl-bars">
+          ${items.map(it => `
+            <div class="tl-bar-row">
+              <div class="tl-bar"
+                style="left:${it.leftPct.toFixed(2)}%;width:${it.widthPct.toFixed(2)}%;background:${it.color};"
+                onmouseenter="tlBarHover(${it.index})"
+                onmouseleave="tlBarUnhover()">
+              </div>
+            </div>
+          `).join('')}
+          <div class="tl-scrubber-line" id="tl-scrubber-line" style="left:0%"></div>
+          <input type="range" class="tl-scrubber-input" id="tl-scrubber-input"
+            min="0" max="1000" value="0" oninput="tlScrub(this.value)">
+        </div>
+        <div class="tl-now-label" style="left:100%">現在</div>
+      </div>
+      <div class="tl-info-panel" id="tl-info-panel">
+        <div class="tl-wiki-section">
+          <div class="tl-wiki-header" id="tl-wiki-header">🌏 社会との接続</div>
+          <div class="tl-wiki-text" id="tl-wiki-text">バーにカーソルを合わせるか、▶ 再生で年代を探索してください</div>
+        </div>
+        <div class="tl-career-section" id="tl-career-section">
+          <p class="tl-career-hint">業種バーをホバーすると詳細が表示されます</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  window._tlState = { items, totalStart, totalMs, playing: false };
+}
+
+// Wikipedia キャッシュ・デバウンス
+const _tlYearCache = new Map();
+let _tlLastYear = null;
+let _tlWikiDebounce = null;
+
+// バーの直接ホバー（手動操作時）
+function tlBarHover(index) {
+  if (!window._tlState) return;
+  const sc = document.getElementById('tl-scrubber-input');
+  const { totalStart, totalMs, items } = window._tlState;
+  let year;
+  if (sc && Number(sc.value) > 0) {
+    const pct = Number(sc.value) / 10;
+    year = new Date(totalStart.getTime() + (pct / 100) * totalMs).getFullYear();
+  } else {
+    year = items[index].start.getFullYear();
+  }
+  _tlUpdateCareer(index);
+  _tlFetchWiki(year);
+  document.querySelectorAll('.tl-bar').forEach((b, i) => {
+    b.style.opacity = i === index ? '1' : '0.25';
+    b.style.filter = i === index ? 'brightness(1.3)' : 'none';
+  });
+}
+
+function tlBarUnhover() {
+  // スクラバーが動いていない時のみリセット
+  const sc = document.getElementById('tl-scrubber-input');
+  if (!sc || Number(sc.value) === 0) {
+    document.querySelectorAll('.tl-bar').forEach(b => { b.style.opacity = '1'; b.style.filter = 'none'; });
+  }
+}
+
+// キャリア情報の更新（下段）
+function _tlUpdateCareer(index) {
+  if (!window._tlState) return;
+  const { items } = window._tlState;
+  const it = items[index];
+  const totalDays = items.reduce((s, x) => s + x.days, 0);
+  const pct = ((it.days / totalDays) * 100).toFixed(1);
+  const yrs = calculateYearsFromDays(it.days);
+  const yStart = it.start.getFullYear() + '/' + String(it.start.getMonth() + 1).padStart(2, '0');
+  const yEnd = it.index === 8 ? '現在' : it.end.getFullYear() + '/' + String(it.end.getMonth() + 1).padStart(2, '0');
+  const cs = document.getElementById('tl-career-section');
+  if (cs) cs.innerHTML = `
+    <div class="tl-career-name" style="color:${it.color}">${it.label}</div>
+    <div class="tl-career-period" style="color:${it.color}">${yStart} 〜 ${yEnd} &nbsp;${it.days.toLocaleString()}日 ${yrs} ${pct}%</div>
+  `;
+}
+
+// Wikipedia 取得（上段）
+function _tlFetchWiki(year) {
+  const header = document.getElementById('tl-wiki-header');
+  if (header) header.innerHTML = `🌏 ${year}年 の社会　<a href="https://ja.wikipedia.org/wiki/${year}%E5%B9%B4#%E3%81%A7%E3%81%8D%E3%81%94%E3%81%A8" target="_blank" rel="noopener" class="tl-wiki-link">Wikipedia で詳細を見る →</a>`;
+  if (_tlLastYear === year) return;
+  _tlLastYear = year;
+  if (_tlWikiDebounce) clearTimeout(_tlWikiDebounce);
+  const wt = document.getElementById('tl-wiki-text');
+  if (wt && !_tlYearCache.has(year)) {
+    wt.innerHTML = '<span class="tl-wiki-loading">読み込み中…</span>';
+  } else if (wt && _tlYearCache.has(year)) {
+    wt.innerHTML = _tlYearCache.get(year);
+    return;
+  }
+  _tlWikiDebounce = setTimeout(() => _tlDoFetch(year), 400);
+}
+
+async function _tlDoFetch(year) {
+  const wt = document.getElementById('tl-wiki-text');
+  if (!wt) return;
+  if (_tlYearCache.has(year)) { wt.innerHTML = _tlYearCache.get(year); return; }
+  try {
+    // 概要ではなく全文(plaintext)を取得してパース
+    const res = await fetch(`https://ja.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&titles=${year}年&format=json&origin=*`);
+    if (!res.ok) throw new Error('err');
+    const json = await res.json();
+    const pages = json.query.pages;
+    const pageId = Object.keys(pages)[0];
+    const extract = pages[pageId].extract || '';
+
+    let text = '';
+    // 「== できごと ==」セクションを抽出（前後の空白に耐性を持たせる強固な正規表現）
+    const m = extract.match(/==\s*できごと\s*==\s*([\s\S]*?)(?=\n==\s*[^=]|$)/);
+    if (m) {
+      let lines = m[1].split('\n')
+        .map(l => l.trim())
+        // 空行や、=== 1月 === などの小見出しを削除
+        .filter(l => l.length > 0 && !l.startsWith('='));
+
+      if (lines.length > 0) {
+        // 先頭3行を取得
+        const topLines = lines.slice(0, 3).map(l => {
+          // 「*」や「-」などで始まる箇条書き記号を掃除して、統一的に「・」を付与
+          return '・' + l.replace(/^[\*\-\・]\s*/, '');
+        });
+        // リンクはヘッダーに移動したのでテキストのみ
+        text = topLines.join('<br>');
+      }
+    }
+
+    // できごとが取れなかった場合はREST API(概要)にフォールバック
+    if (!text) {
+      const sumRes = await fetch(`https://ja.wikipedia.org/api/rest_v1/page/summary/${year}年`, { headers: { Accept: 'application/json' } });
+      if (sumRes.ok) {
+        const sumJson = await sumRes.json();
+        text = sumJson.extract ? sumJson.extract.replace(/\n/g, ' ').slice(0, 100) + '…' : '';
+      }
+    }
+
+    if (!text) text = 'この年のWikipediaデータが見つかりませんでした。';
+
+    _tlYearCache.set(year, text);
+    const el = document.getElementById('tl-wiki-text');
+    if (el) el.innerHTML = text;
+  } catch {
+    const el = document.getElementById('tl-wiki-text');
+    if (el) el.innerHTML = 'データを取得できませんでした。';
+  }
+}
+
+// スクラバー操作
+function tlScrub(value) {
+  if (!window._tlState) return;
+  const { items, totalStart, totalMs } = window._tlState;
+  const pct = Number(value) / 10;
+
+  // ラインを動かす
+  const line = document.getElementById('tl-scrubber-line');
+  if (line) line.style.left = pct + '%';
+
+  // 年号を更新
+  const currentDate = new Date(totalStart.getTime() + (pct / 100) * totalMs);
+  const year = currentDate.getFullYear();
+  const yd = document.getElementById('tl-year-display');
+  if (yd) yd.textContent = year + '年';
+
+  // アクティブ業種を判定
+  const ct = currentDate.getTime();
+  const activeIdx = items.findIndex(it => ct >= it.start.getTime() && ct <= it.end.getTime());
+  if (activeIdx >= 0) {
+    document.querySelectorAll('.tl-bar').forEach((b, i) => {
+      b.style.opacity = i === activeIdx ? '1' : '0.25';
+      b.style.filter = i === activeIdx ? 'brightness(1.3)' : 'none';
+    });
+    _tlUpdateCareer(activeIdx);
+  } else {
+    document.querySelectorAll('.tl-bar').forEach(b => { b.style.opacity = '0.4'; b.style.filter = 'none'; });
+  }
+
+  // Wikipedia は年が変わった時だけ
+  _tlFetchWiki(year);
+}
+
+let _tlRaf = null;
+let _tlStart = null;
+const _tlDuration = 7000; // 7秒で1984→現在
+
+function toggleTimelinePlay() {
+  if (!window._tlState) return;
+  const btn = document.getElementById('tl-play-btn');
+  if (!btn) return;
+
+  if (window._tlState.playing) {
+    window._tlState.playing = false;
+    if (_tlRaf) cancelAnimationFrame(_tlRaf);
+    btn.textContent = '▶ 再生';
+    return;
+  }
+
+  const scrubber = document.getElementById('tl-scrubber-input');
+  const currentVal = scrubber ? Number(scrubber.value) : 0;
+  if (currentVal >= 1000) { // 最後まで行ったらリセット
+    if (scrubber) scrubber.value = 0;
+    tlScrub(0);
+  }
+  window._tlState.playing = true;
+  btn.textContent = '⏸ 停止';
+
+  const startOffset = (Number(document.getElementById('tl-scrubber-input')?.value || 0) / 1000) * _tlDuration;
+  _tlStart = performance.now() - startOffset;
+
+  function step(now) {
+    if (!window._tlState || !window._tlState.playing) return;
+    const progress = Math.min((now - _tlStart) / _tlDuration, 1);
+    const val = Math.round(progress * 1000);
+    const sc = document.getElementById('tl-scrubber-input');
+    if (sc) sc.value = val;
+    tlScrub(val);
+    if (progress < 1) {
+      _tlRaf = requestAnimationFrame(step);
+    } else {
+      window._tlState.playing = false;
+      const b = document.getElementById('tl-play-btn');
+      if (b) b.textContent = '▶ 再生';
+    }
+  }
+  _tlRaf = requestAnimationFrame(step);
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   // Small delay to ensure everything is loaded

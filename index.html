@@ -63,6 +63,15 @@
             <div class="header-timeline-container timeline-tooltip-wrap" title="1984年 → 現在 / つくるの軌跡を成分表示">
               <div id="header-timeline-bar" class="header-timeline-bar"></div>
             </div>
+
+            <!-- Guide Links (Added) -->
+            <div class="header-guide-links">
+              <div class="header-guide-title">さらに</div>
+              <a href="#" onclick="openModalFor(showTimeline); return false;"
+                class="header-guide-link"><span>&rarr;</span> タイムラインで追う出来事</a>
+              <a href="#" onclick="startComparison(); return false;" class="header-guide-link"><span>&rarr;</span>
+                あなたの成分とマッチング</a>
+            </div>
           </div>
         </div>
       </div>
@@ -152,7 +161,33 @@
         </div>
       </div>
 
-      <!-- Tile 7: Message -->
+
+
+      <!-- Tile 7: タイムライン -->
+      <div class="bento-card timeline-tile" data-type="timeline" onclick="openModalFor(showTimeline)">
+        <span class="tile-bg-icon">Timeline</span>
+        <div class="tile-header">
+          <h3><strong>タイムライン</strong></h3>
+        </div>
+        <div class="tile-content">
+          <p style="margin: 0 0 12px; color: var(--text-secondary); font-size: 0.9rem;">1984年〜現在・9業種の軌跡</p>
+          <div class="tl-tile-minibar"></div>
+        </div>
+      </div>
+
+      <!-- Tile 8: 成分比較 -->
+      <div class="bento-card compare-tile" data-type="compare" onclick="startComparison()">
+        <span class="tile-bg-icon">Match</span>
+        <div class="tile-header">
+          <h3><strong>成分比較</strong></h3>
+        </div>
+        <div class="tile-content">
+          <p style="margin: 0 0 14px; color: var(--text-secondary); font-size: 0.9rem;">あなたの成分との相性診断</p>
+          <button class="compare-start-btn" onclick="startComparison(); event.stopPropagation();">分析する →</button>
+        </div>
+      </div>
+
+      <!-- Tile 8: Message -->
       <div class="bento-card message-tile" data-type="message">
         <span class="tile-bg-icon">Message</span>
         <div class="tile-header">
