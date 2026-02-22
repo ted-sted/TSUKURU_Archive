@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <title>成分表示 - 『つくる』の軌跡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="1984年から続く9業種の成分表示。『つくる』の軌跡を視覚化したプロフィールアーカイブ。" />
-  
+
   <link rel="icon" href="assets/images/favicon_donut.ico" />
   <!-- OGP Settings -->
   <meta property="og:title" content="成分表示 - 『つくる』の軌跡" />
@@ -21,10 +22,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  
+
   <link rel="stylesheet" href="assets/css/bento.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <!-- 2回目以降: JS実行前にスプラッシュを完全非表示にする（「0」が一瞬出る問題を根本解決） -->
+  <script>
+    if (sessionStorage.getItem('tsukuru_visited')) {
+      document.documentElement.classList.add('skip-splash');
+    }
+  </script>
 </head>
+
 <body class="bento-body">
   <!-- Opening Splash Screen -->
   <div id="splash-screen" class="splash-screen">
@@ -32,12 +40,12 @@
       <p class="splash-sub">『つくる』の軌跡</p>
       <h1 class="splash-title">成分表示</h1>
       <div class="splash-stats">
-        <span id="splash-days" class="splash-days">0</span>
+        <span id="splash-days" class="splash-days"></span>
       </div>
       <div class="splash-progress-container">
         <div id="splash-progress-bar" class="splash-progress-bar"></div>
       </div>
-      <button id="splash-enter-btn" class="splash-enter-btn">Enter Archives</button>
+      <button id="splash-enter-btn" class="splash-enter-btn">開く</button>
     </div>
   </div>
 
@@ -52,7 +60,7 @@
             <p>成分：9業種</p>
             <p>累計日数：<span id="header-days">0</span>日</p>
             <p>（<span id="header-years">0年0ヶ月0日</span>）</p>
-            <div class="header-timeline-container">
+            <div class="header-timeline-container timeline-tooltip-wrap" title="1984年 → 現在 / つくるの軌跡を成分表示">
               <div id="header-timeline-bar" class="header-timeline-bar"></div>
             </div>
           </div>
@@ -63,7 +71,7 @@
       <div class="bento-card chart-tile" data-type="chart" data-chart="bar">
         <div class="tile-header">
           <h3>成分別 日数</h3>
-          <p class="tile-description">就業順に携わった日数をバーの長さで表しています。</p>
+          <p class="tile-description">就業順・各業種の経験日数</p>
         </div>
         <div class="chart-container">
           <canvas id="barChart"></canvas>
@@ -74,7 +82,7 @@
       <div class="bento-card chart-tile" data-type="chart" data-chart="pie">
         <div class="tile-header">
           <h3>成分別 割合</h3>
-          <p class="tile-description">全期間を100％としたときの成分構成です。</p>
+          <p class="tile-description">各業種の割合</p>
         </div>
         <div class="chart-container">
           <canvas id="pieChart"></canvas>
@@ -89,7 +97,7 @@
           <span class="tile-action-icon">+</span>
         </div>
         <div class="tile-content">
-          <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">業種別の詳細情報です。</p>
+          <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">業種別の詳細情報</p>
         </div>
       </div>
 
@@ -102,7 +110,7 @@
         </div>
         <div class="tile-content">
           <div class="philosophy-content">
-            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">自戒をこめて</p>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">「カリフォルニアロール」のような仕事について</p>
           </div>
         </div>
       </div>
@@ -116,7 +124,7 @@
         </div>
         <div class="tile-content">
           <div class="activities-content">
-            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">キーワード</p>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">現在の活動・趣味・興味のキーワード</p>
           </div>
         </div>
       </div>
@@ -159,7 +167,7 @@
         </div>
       </div>
 
-      </div>
+    </div>
     </div>
   </main>
 
@@ -199,4 +207,5 @@
 
   <script src="assets/js/bento.js"></script>
 </body>
+
 </html>

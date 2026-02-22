@@ -13,8 +13,10 @@
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
   --text-muted: #666666;
-  --accent-primary: #3b82f6;  /* アクセント1 (現状維持) */
-  --accent-secondary: #8b5cf6;/* アクセント2 (現状維持) */
+  --accent-primary: #3b82f6;
+  /* アクセント1 (現状維持) */
+  --accent-secondary: #8b5cf6;
+  /* アクセント2 (現状維持) */
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
@@ -94,7 +96,8 @@ body {
 /* Header Timeline Bar */
 .header-timeline-container {
   width: 100%;
-  height: 4px;
+  height: 5px;
+  /* 帯グラフなので少し具体的に */
   background: var(--bg-secondary);
   border-radius: 2px;
   margin-top: 1rem;
@@ -104,10 +107,24 @@ body {
 
 .header-timeline-bar {
   height: 100%;
-  width: 0; /* JavaScriptで100%にします */
-  background: linear-gradient(90deg, #055584, #d56062);
+  width: 100%;
+  /* セグメントが内側を埋める */
+  display: flex;
+  /* 帯連結のためflex */
   border-radius: 2px;
-  transition: width 2.5s cubic-bezier(0.22, 1, 0.36, 1); /* 滑らかな加減速 */
+  overflow: hidden;
+}
+
+/* 各業種セグメント */
+.timeline-segment {
+  height: 100%;
+  cursor: help;
+  transition: filter 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.timeline-segment:hover {
+  filter: brightness(1.4);
 }
 
 /* Main Container */
@@ -115,7 +132,8 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
-  filter: blur(20px); /* 初期状態はぼかす */
+  filter: blur(20px);
+  /* 初期状態はぼかす */
   opacity: 1;
   transition: filter 1.5s ease, opacity 1.5s ease;
 }
@@ -162,7 +180,8 @@ body {
   grid-column: span 1;
   grid-row: span 1;
   /* 高さを内容に合わせるため最小高さを削除 */
-  padding-top: 1rem; /* 上下のパディングを詰める */
+  padding-top: 1rem;
+  /* 上下のパディングを詰める */
   padding-bottom: 1rem;
 }
 
@@ -311,27 +330,27 @@ body {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto;
   }
-  
+
   .chart-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .philosophy-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .activities-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .audio-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .message-tile {
     grid-column: span 3;
     grid-row: span 1;
@@ -343,27 +362,27 @@ body {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: auto;
   }
-  
+
   .chart-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .philosophy-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .activities-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .audio-tile {
     grid-column: span 1;
     grid-row: span 1;
   }
-  
+
   .message-tile {
     grid-column: span 2;
     grid-row: span 1;
@@ -373,74 +392,82 @@ body {
 @media (max-width: 480px) {
   .bento-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(200px, auto); /* 高さを固定せず自動調整 */
-    grid-auto-flow: row; /* 縦1列に並べる */
+    grid-template-rows: minmax(200px, auto);
+    /* 高さを固定せず自動調整 */
+    grid-auto-flow: row;
+    /* 縦1列に並べる */
   }
-  
+
   .chart-tile {
     grid-column: span 1;
-    grid-row: auto; /* 自動配置 */
+    grid-row: auto;
+    /* 自動配置 */
   }
-  
+
   .list-tile {
     grid-column: span 1;
-    grid-row: auto; /* 自動配置 */
+    grid-row: auto;
+    /* 自動配置 */
   }
-  
+
   .philosophy-tile {
     grid-column: span 1;
-    grid-row: auto; /* 自動配置 */
+    grid-row: auto;
+    /* 自動配置 */
   }
-  
+
   .activities-tile {
     grid-column: span 1;
-    grid-row: auto; /* 自動配置 */
+    grid-row: auto;
+    /* 自動配置 */
   }
-  
+
   .audio-tile {
     grid-column: span 1;
-    grid-row: auto; /* 自動配置 */
+    grid-row: auto;
+    /* 自動配置 */
   }
-  
+
   .message-tile {
     grid-column: span 1;
-    grid-row: auto; /* 自動配置 */
+    grid-row: auto;
+    /* 自動配置 */
   }
-  
+
   .tile-header h3 {
     font-size: 1rem;
   }
-  
+
   .tile-description {
     font-size: 0.8rem;
   }
-  
+
   .philosophy-content p {
     font-size: 0.9rem;
   }
-  
+
   .activities-content p {
     font-size: 0.8rem;
   }
-  
+
   .audio-title {
     font-size: 0.9rem;
   }
-  
+
   .audio-description,
   .audio-subtitle,
   .audio-source {
     font-size: 0.7rem;
   }
-  
+
   .message-tagline {
     font-size: 1rem;
   }
-  
+
   .message-subtitle {
     font-size: 0.9rem;
   }
-  
+
   .message-text p {
     font-size: 0.8rem;
   }
@@ -723,7 +750,8 @@ body {
 .philosophy-content {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* 間隔を詰める */
+  gap: 0.5rem;
+  /* 間隔を詰める */
   text-align: left;
 }
 
@@ -846,7 +874,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4); /* 背景を薄くしてダッシュボードが見えるように */
+  background: rgba(0, 0, 0, 0.4);
+  /* 背景を薄くしてダッシュボードが見えるように */
   backdrop-filter: blur(4px);
   z-index: 1000;
   opacity: 0;
@@ -863,24 +892,34 @@ body {
 
 .modal-content {
   background: var(--bg-card);
-  border-left: 1px solid var(--border-secondary); /* 左側に境界線 */
-  border-radius: 0; /* 角丸をなくす */
-  padding: 0; /* パディングを削除し、内部で制御 */
+  border-left: 1px solid var(--border-secondary);
+  /* 左側に境界線 */
+  border-radius: 0;
+  /* 角丸をなくす */
+  padding: 0;
+  /* パディングを削除し、内部で制御 */
   width: 100%;
-  max-width: 600px; /* パネルの幅 */
-  height: 100%; /* 全高 */
+  max-width: 600px;
+  /* パネルの幅 */
+  height: 100%;
+  /* 全高 */
   max-height: 100vh;
-  overflow: hidden; /* コンテナのスクロールを無効化 */
-  display: flex; /* フレックスボックス化 */
+  overflow: hidden;
+  /* コンテナのスクロールを無効化 */
+  display: flex;
+  /* フレックスボックス化 */
   flex-direction: column;
   position: relative;
-  transform: translateX(100%); /* 右外に配置 */
-  transition: transform var(--transition-normal) cubic-bezier(0.2, 0.8, 0.2, 1); /* 滑らかなスライド */
+  transform: translateX(100%);
+  /* 右外に配置 */
+  transition: transform var(--transition-normal) cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* 滑らかなスライド */
   box-shadow: var(--shadow-xl);
 }
 
 .detail-modal.active .modal-content {
-  transform: translateX(0); /* スライドイン */
+  transform: translateX(0);
+  /* スライドイン */
 }
 
 .modal-close {
@@ -900,7 +939,8 @@ body {
   color: var(--text-secondary);
   font-size: 1.5rem;
   font-weight: 300;
-  z-index: 10000; /* z-indexを強化 */
+  z-index: 10000;
+  /* z-indexを強化 */
 }
 
 .modal-close:hover {
@@ -912,10 +952,13 @@ body {
 .modal-body {
   color: var(--text-secondary);
   line-height: 1.7;
-  overflow-y: auto; /* ボディのみスクロール */
+  overflow-y: auto;
+  /* ボディのみスクロール */
   flex: 1;
-  padding: 2.5rem; /* パディングをここに移動 */
-  -webkit-overflow-scrolling: touch; /* iOSでのスクロール慣性 */
+  padding: 2.5rem;
+  /* パディングをここに移動 */
+  -webkit-overflow-scrolling: touch;
+  /* iOSでのスクロール慣性 */
 }
 
 .modal-body h2 {
@@ -942,28 +985,37 @@ body {
   margin-bottom: 0;
 }
 
+.modal-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  margin: 1rem 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .bento-main {
     padding: 1rem;
   }
-  
+
   .bento-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .hero-card,
   .chart-card {
     grid-column: span 1;
   }
-  
+
   .modal-content {
     padding: 0;
     margin: 0;
   }
+
   .modal-body {
-    padding: 1.5rem; /* モバイル用パディング */
+    padding: 1.5rem;
+    /* モバイル用パディング */
   }
 }
 
@@ -971,18 +1023,19 @@ body {
   .bento-card {
     padding: 1rem;
   }
-  
+
   .hero-card h2 {
     font-size: 1.25rem;
   }
-  
+
   .career-card h3 {
     font-size: 1rem;
   }
-  
+
   .modal-body h2 {
     font-size: 1.4rem !important;
-    padding-right: 3rem; /* 閉じるボタンとの重なり防止 */
+    padding-right: 3rem;
+    /* 閉じるボタンとの重なり防止 */
     margin-bottom: 1rem;
   }
 
@@ -1009,8 +1062,10 @@ body {
   from {
     opacity: 0;
     transform: translateY(20px);
-    filter: blur(10px); /* ぼかし効果を追加 */
+    filter: blur(10px);
+    /* ぼかし効果を追加 */
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1018,22 +1073,58 @@ body {
   }
 }
 
-.bento-card {
+/* カード個別アニメーション遅延 */
+.bento-card:nth-child(1) {
+  animation-delay: 0.1s;
 }
 
-.bento-card:nth-child(1) { animation-delay: 0.1s; }
-.bento-card:nth-child(2) { animation-delay: 0.2s; }
-.bento-card:nth-child(3) { animation-delay: 0.3s; }
-.bento-card:nth-child(4) { animation-delay: 0.4s; }
-.bento-card:nth-child(5) { animation-delay: 0.5s; }
-.bento-card:nth-child(6) { animation-delay: 0.6s; }
-.bento-card:nth-child(7) { animation-delay: 0.7s; }
-.bento-card:nth-child(8) { animation-delay: 0.8s; }
-.bento-card:nth-child(9) { animation-delay: 0.9s; }
-.bento-card:nth-child(10) { animation-delay: 1.0s; }
-.bento-card:nth-child(11) { animation-delay: 1.1s; }
-.bento-card:nth-child(12) { animation-delay: 1.2s; }
-.bento-card:nth-child(13) { animation-delay: 1.3s; }
+.bento-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.bento-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.bento-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.bento-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.bento-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+.bento-card:nth-child(7) {
+  animation-delay: 0.7s;
+}
+
+.bento-card:nth-child(8) {
+  animation-delay: 0.8s;
+}
+
+.bento-card:nth-child(9) {
+  animation-delay: 0.9s;
+}
+
+.bento-card:nth-child(10) {
+  animation-delay: 1.0s;
+}
+
+.bento-card:nth-child(11) {
+  animation-delay: 1.1s;
+}
+
+.bento-card:nth-child(12) {
+  animation-delay: 1.2s;
+}
+
+.bento-card:nth-child(13) {
+  animation-delay: 1.3s;
+}
 
 /* --- Audio Visualizer --- */
 .audio-visualizer {
@@ -1051,21 +1142,68 @@ body {
   animation: visualize 2.5s ease-in-out infinite;
 }
 
-.audio-visualizer span:nth-child(1) { height: 40%; animation-delay: 0.0s; background-color: #055584; }
-.audio-visualizer span:nth-child(2) { height: 70%; animation-delay: 0.2s; background-color: #459cce; }
-.audio-visualizer span:nth-child(3) { height: 50%; animation-delay: 0.4s; background-color: #84bcda; }
-.audio-visualizer span:nth-child(4) { height: 80%; animation-delay: 0.1s; background-color: #9ebea7; }
-.audio-visualizer span:nth-child(5) { height: 60%; animation-delay: 0.5s; background-color: #b8c073; }
-.audio-visualizer span:nth-child(6) { height: 90%; animation-delay: 0.3s; background-color: #ecc30b; }
-.audio-visualizer span:nth-child(7) { height: 45%; animation-delay: 0.6s; background-color: #f09d2a; }
-.audio-visualizer span:nth-child(8) { height: 75%; animation-delay: 0.2s; background-color: #f37748; }
-.audio-visualizer span:nth-child(9) { height: 55%; animation-delay: 0.4s; background-color: #d56062; }
+.audio-visualizer span:nth-child(1) {
+  height: 40%;
+  animation-delay: 0.0s;
+  background-color: #055584;
+}
+
+.audio-visualizer span:nth-child(2) {
+  height: 70%;
+  animation-delay: 0.2s;
+  background-color: #459cce;
+}
+
+.audio-visualizer span:nth-child(3) {
+  height: 50%;
+  animation-delay: 0.4s;
+  background-color: #84bcda;
+}
+
+.audio-visualizer span:nth-child(4) {
+  height: 80%;
+  animation-delay: 0.1s;
+  background-color: #9ebea7;
+}
+
+.audio-visualizer span:nth-child(5) {
+  height: 60%;
+  animation-delay: 0.5s;
+  background-color: #b8c073;
+}
+
+.audio-visualizer span:nth-child(6) {
+  height: 90%;
+  animation-delay: 0.3s;
+  background-color: #ecc30b;
+}
+
+.audio-visualizer span:nth-child(7) {
+  height: 45%;
+  animation-delay: 0.6s;
+  background-color: #f09d2a;
+}
+
+.audio-visualizer span:nth-child(8) {
+  height: 75%;
+  animation-delay: 0.2s;
+  background-color: #f37748;
+}
+
+.audio-visualizer span:nth-child(9) {
+  height: 55%;
+  animation-delay: 0.4s;
+  background-color: #d56062;
+}
 
 @keyframes visualize {
-  0%, 100% {
+
+  0%,
+  100% {
     height: 20%;
     opacity: 0.5;
   }
+
   50% {
     height: 100%;
     opacity: 1;
@@ -1080,6 +1218,7 @@ body {
   align-items: center;
   margin-bottom: 1rem;
 }
+
 .philosophy-tile .tile-header,
 .activities-tile .tile-header,
 .audio-tile .tile-header,
@@ -1087,7 +1226,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem; /* 1行分の間隔を確保 */
+  margin-bottom: 1rem;
+  /* 1行分の間隔を確保 */
 }
 
 .list-tile .tile-header h3,
@@ -1115,8 +1255,11 @@ body {
   color: var(--text-secondary);
   background-color: var(--bg-secondary);
   border-radius: 50%;
-  transform: rotate(0deg);
-  transition: transform 0.4s ease;
+  border: 1px solid transparent;
+  transform: rotate(0deg) scale(1);
+  transition: transform 0.35s ease, color 0.25s ease,
+    background-color 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease;
   line-height: 1;
 }
 
@@ -1125,8 +1268,12 @@ body {
 .activities-tile:hover .tile-action-icon,
 .audio-tile:hover .tile-action-icon,
 .message-tile:hover .tile-action-icon {
-  transform: rotate(90deg);
-  font-weight: 700;
+  transform: rotate(90deg) scale(1.12);
+  color: var(--text-primary);
+  background-color: var(--bg-card-hover);
+  border-color: var(--border-secondary);
+  box-shadow: none;
+  font-weight: 600;
 }
 
 /* Footer */
@@ -1151,7 +1298,8 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--border-secondary);
   border-radius: 5px;
-  border: 2px solid var(--bg-primary); /* 余白を作る */
+  border: 2px solid var(--bg-primary);
+  /* 余白を作る */
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -1166,15 +1314,14 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(
-    600px circle at var(--mouse-x) var(--mouse-y),
-    rgba(255, 255, 255, 0.06),
-    transparent 40%
-  );
+  background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y),
+      rgba(255, 255, 255, 0.06),
+      transparent 40%);
   z-index: 2;
   opacity: 0;
   transition: opacity 0.5s ease;
-  pointer-events: none; /* クリックを阻害しないように */
+  pointer-events: none;
+  /* クリックを阻害しないように */
 }
 
 .bento-grid:hover .bento-card::after {
@@ -1200,6 +1347,12 @@ body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+}
+
+/* 2回目以降のアクセス: head内インラインscriptが付与するクラスで
+   スプラッシュをレンダリング前に完全非表示（「0」一瞬表示の根本解決） */
+.skip-splash #splash-screen {
+  display: none !important;
 }
 
 .splash-content {
@@ -1281,13 +1434,15 @@ body {
 /* --- Decorative Background Icons for Compact Tiles --- */
 .tile-bg-icon {
   position: absolute;
-  z-index: 0; /* Place behind content */
-  bottom: 0.5rem;
-  right: 1rem;
+  z-index: 0;
+  /* Place behind content */
+  bottom: -0.5rem;
+  right: 0.75rem;
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.04);
+  /* M-2: opacity を 0.06 -> 0.04 に下げる */
   pointer-events: none;
   user-select: none;
   transition: color 0.3s ease;
@@ -1300,22 +1455,37 @@ body {
     opacity: 0;
     transform: translateY(15px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.modal-body > * {
+.modal-body>* {
   opacity: 0;
   animation: modalContentFadeIn 0.5s ease forwards;
 }
 
-.modal-body > *:nth-child(1) { animation-delay: 0.1s; }
-.modal-body > *:nth-child(2) { animation-delay: 0.15s; }
-.modal-body > *:nth-child(3) { animation-delay: 0.2s; }
-.modal-body > *:nth-child(4) { animation-delay: 0.25s; }
-.modal-body > *:nth-child(n+5) { animation-delay: 0.3s; }
+.modal-body>*:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.modal-body>*:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.modal-body>*:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.modal-body>*:nth-child(4) {
+  animation-delay: 0.25s;
+}
+
+.modal-body>*:nth-child(n+5) {
+  animation-delay: 0.3s;
+}
 
 /* List Items Staggering */
 .modal-body ul li,
@@ -1324,13 +1494,40 @@ body {
   animation: modalContentFadeIn 0.5s ease forwards;
 }
 
-.modal-body ul li:nth-child(1), .modal-body table tbody tr:nth-child(1) { animation-delay: 0.2s; }
-.modal-body ul li:nth-child(2), .modal-body table tbody tr:nth-child(2) { animation-delay: 0.25s; }
-.modal-body ul li:nth-child(3), .modal-body table tbody tr:nth-child(3) { animation-delay: 0.3s; }
-.modal-body ul li:nth-child(4), .modal-body table tbody tr:nth-child(4) { animation-delay: 0.35s; }
-.modal-body ul li:nth-child(5), .modal-body table tbody tr:nth-child(5) { animation-delay: 0.4s; }
-.modal-body ul li:nth-child(6), .modal-body table tbody tr:nth-child(6) { animation-delay: 0.45s; }
-.modal-body ul li:nth-child(n+7), .modal-body table tbody tr:nth-child(n+7) { animation-delay: 0.5s; }
+.modal-body ul li:nth-child(1),
+.modal-body table tbody tr:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.modal-body ul li:nth-child(2),
+.modal-body table tbody tr:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.modal-body ul li:nth-child(3),
+.modal-body table tbody tr:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.modal-body ul li:nth-child(4),
+.modal-body table tbody tr:nth-child(4) {
+  animation-delay: 0.35s;
+}
+
+.modal-body ul li:nth-child(5),
+.modal-body table tbody tr:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+.modal-body ul li:nth-child(6),
+.modal-body table tbody tr:nth-child(6) {
+  animation-delay: 0.45s;
+}
+
+.modal-body ul li:nth-child(n+7),
+.modal-body table tbody tr:nth-child(n+7) {
+  animation-delay: 0.5s;
+}
 
 /* --- Activities Tooltip --- */
 .activities-list {
@@ -1340,7 +1537,8 @@ body {
   line-height: 2;
   font-size: 1rem;
   position: relative;
-  z-index: 10; /* 下の説明文より手前に表示させるため */
+  z-index: 10;
+  /* 下の説明文より手前に表示させるため */
 }
 
 .activity-item {
@@ -1358,32 +1556,237 @@ body {
 .activity-item::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: 100%; /* 下に表示 */
+  top: 100%;
+  /* 下に表示 */
   bottom: auto;
   left: 0;
-  background: #111111; /* 背景を完全に不透明な色に固定 */
+  background: #111111;
+  /* 背景を完全に不透明な色に固定 */
   color: var(--text-primary);
-  padding: 0.8rem 1rem; /* 余白を広げる */
+  padding: 0.8rem 1rem;
+  /* 余白を広げる */
   border-radius: 4px;
-  font-size: 0.9rem; /* 文字サイズを微調整 */
+  font-size: 0.9rem;
+  /* 文字サイズを微調整 */
   white-space: pre-wrap;
   width: max-content;
   max-width: 300px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8); /* 影を濃くして浮き出しを強調 */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  /* 影を濃くして浮き出しを強調 */
   border: 1px solid rgba(255, 255, 255, 0.1);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-5px); /* 下からふわっと出るように調整 */
+  transform: translateY(-5px);
+  /* 下からふわっと出るように調整 */
   transition: all 0.2s ease;
-  z-index: 9999; /* 確実に最前面に表示 */
+  z-index: 9999;
+  /* 確実に最前面に表示 */
   pointer-events: none;
-  margin-top: 0.5rem; /* テキストとの間隔 */
+  margin-top: 0.5rem;
+  /* テキストとの間隔 */
   margin-bottom: 0;
-  line-height: 1.6; /* 行間を広げる */
+  line-height: 1.6;
+  /* 行間を広げる */
+}
+
+/* アコーディオム項目では旧tooltip::afterを完全無効化 */
+.activity-item.accordion-item {
+  cursor: pointer;
+  /* helpカーソルを上書き */
+  width: auto;
+}
+
+.activity-item.accordion-item::after,
+.activity-item.accordion-item:hover::after {
+  content: none !important;
+  /* 旧tooltipのBoxを消去 */
+  display: none !important;
 }
 
 .activity-item:hover::after {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+/* ==============================
+   成分詳細「戻る」ボタン（Milestone 1: H-2対応）
+   ============================== */
+.detail-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: 0.5rem;
+}
+
+.detail-back-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+  transform: translateX(-2px);
+}
+
+/* ==============================
+   Milestone 3-1: Activities アコーディオン
+   ============================== */
+.accordion-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.accordion-item {
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-primary);
+  transition: background-color 0.2s ease;
+}
+
+.accordion-item:last-child {
+  border-bottom: none;
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+  user-select: none;
+}
+
+.accordion-item:hover .accordion-header {
+  color: var(--text-primary);
+}
+
+.accordion-arrow {
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.accordion-item.expanded .accordion-arrow {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+.accordion-body {
+  display: none;
+  padding: 0 0 1rem 1.2rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  border-left: 2px solid var(--border-primary);
+  margin-left: 0.8rem;
+}
+
+.accordion-item.expanded .accordion-body {
+  display: block;
+  animation: accordionOpen 0.25s ease;
+}
+
+@keyframes accordionOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================
+   Milestone 3-2: Philosophy 展開ボタン
+   ============================== */
+.philosophy-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 1.3rem;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: 0.25rem;
+}
+
+.philosophy-expand-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+.philosophy-expand-btn.expanded {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.expand-btn-icon {
+  font-size: 0.65rem;
+  transition: transform 0.3s ease;
+}
+
+/* ==============================
+   Milestone 3-3: タイムラインツールチップ
+   ============================== */
+.timeline-tooltip-wrap {
+  position: relative;
+  cursor: help;
+}
+
+.timeline-tooltip-wrap::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  background: #111;
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+}
+
+.timeline-tooltip-wrap:hover::after {
+  opacity: 1;
+}
+
+/* ==============================
+   Milestone 3-4: 音声再生中カード発光
+   ============================== */
+.audio-tile.is-playing {
+  border-color: rgba(5, 85, 132, 0.6);
+  box-shadow:
+    0 0 0 1px rgba(5, 85, 132, 0.3),
+    0 0 20px rgba(5, 85, 132, 0.15),
+    var(--shadow-lg);
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.audio-tile.is-playing .tile-bg-icon {
+  color: rgba(5, 85, 132, 0.12);
 }

@@ -6,7 +6,7 @@
 const chartData = {
   labels: [
     '洋食調理スタッフ',
-    '流通店舗向けシステム開発', 
+    '流通店舗向けシステム開発',
     '店舗什器板金製造',
     'リテールソリューション営業',
     '金融機器導入スケジュール管理',
@@ -49,24 +49,24 @@ let modalHistory = [];
 function calculateSpan(startYear, startMonth, startDay) {
   const startDate = new Date(startYear, startMonth - 1, startDay);
   const currentDate = new Date();
-  
+
   let years = currentDate.getFullYear() - startDate.getFullYear();
   let months = currentDate.getMonth() - startDate.getMonth();
   let days = currentDate.getDate() - startDate.getDate();
-  
+
   if (days < 0) {
     months--;
     const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
     days += lastMonth.getDate();
   }
-  
+
   if (months < 0) {
     years--;
     months += 12;
   }
-  
+
   const totalDays = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
-  
+
   return {
     years,
     months,
@@ -79,21 +79,21 @@ function calculateSpan(startYear, startMonth, startDay) {
 function animateCountUp(element, targetValue, duration = 2000, suffix = '') {
   const startTime = performance.now();
   const startValue = 0;
-  
+
   function updateCount(currentTime) {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    
+
     const easeOutQuart = 1 - Math.pow(1 - progress, 4);
     const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
-    
+
     element.textContent = currentValue.toLocaleString() + suffix;
-    
+
     if (progress < 1) {
       requestAnimationFrame(updateCount);
     }
   }
-  
+
   requestAnimationFrame(updateCount);
 }
 
@@ -106,36 +106,49 @@ function setupOpeningAnimation() {
   const main = document.querySelector('.bento-main');
   const grid = document.getElementById('bento-grid');
 
-  // Calculate total days
+  // ── M-1: sessionStorage でスプラッシュを初回のみ表示 ──
+  const hasVisited = sessionStorage.getItem('tsukuru_visited');
+
+  // Dismiss function
+  const dismissSplash = () => {
+    if (splash.classList.contains('hidden')) return;
+    sessionStorage.setItem('tsukuru_visited', '1');
+    splash.classList.add('hidden');
+    main.classList.add('focused');
+
+    setTimeout(() => {
+      grid.classList.add('animate-in');
+    }, 500);
+
+    const headerTimeline = document.getElementById('header-timeline-bar');
+    if (headerTimeline) {
+      buildSegmentBar(headerTimeline); // 業種カラー帯グラフに切り替え
+    }
+  };
+
+  if (hasVisited) {
+    // 2回目以降：スプラッシュをスキップして即ダッシュボード表示
+    splash.classList.add('hidden');
+    main.classList.add('focused');
+    grid.classList.add('animate-in');
+    const headerTimeline = document.getElementById('header-timeline-bar');
+    if (headerTimeline) {
+      buildSegmentBar(headerTimeline); // 業種カラー帯グラフに切り替え
+    }
+    return; // 以降の初回アニメーション処理をスキップ
+  }
+
+  // 初回のみ：カウントアップアニメーションを実行
   const careerSpan = calculateSpan(1984, 4, 1);
-  
-  // Animate Splash Counter
+
   if (splashDays) {
     animateCountUp(splashDays, careerSpan.totalDays, 2500);
   }
 
   // Animate Progress Bar
   setTimeout(() => {
-    if(progressBar) progressBar.style.width = '100%';
+    if (progressBar) progressBar.style.width = '100%';
   }, 100);
-
-  // Dismiss function
-  const dismissSplash = () => {
-    if (splash.classList.contains('hidden')) return;
-    
-    splash.classList.add('hidden');
-    main.classList.add('focused');
-    
-    setTimeout(() => {
-      grid.classList.add('animate-in');
-    }, 500);
-
-    const headerTimeline = document.getElementById('header-timeline-bar');
-    if(headerTimeline) {
-      headerTimeline.style.transition = 'none';
-      headerTimeline.style.width = '100%';
-    }
-  };
 
   // Enable click to skip immediately
   if (splash) {
@@ -145,7 +158,7 @@ function setupOpeningAnimation() {
 
   // Show Enter Button after animation
   setTimeout(() => {
-    if(enterBtn) {
+    if (enterBtn) {
       enterBtn.classList.add('visible');
       enterBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -155,15 +168,45 @@ function setupOpeningAnimation() {
   }, 2800); // Wait for count up + buffer
 }
 
+/**
+ * 業種カラー帯グラフを生成する関数
+ * chartData の labels / data / colors / periods を元に
+ * 割合に応じた幅の divセグメントを並べる
+ */
+function buildSegmentBar(container) {
+  // A-Zen の日数を取得（初期化済みであれば更新されている）
+  const data = chartData.data.map((d, i) =>
+    i === 8 ? calculateSpan(2021, 9, 11).totalDays : d
+  );
+  const total = data.reduce((s, v) => s + v, 0);
+
+  container.innerHTML = ''; // 旧内容クリア
+  container.style.width = '100%'; // コンテナ幅を明示設定
+
+  chartData.labels.forEach((label, i) => {
+    const pct = (data[i] / total) * 100;
+    const period = i === 8
+      ? `2021/9/11 \u301c \u73fe\u5728`
+      : chartData.periods[i];
+
+    const seg = document.createElement('div');
+    seg.className = 'timeline-segment';
+    seg.style.width = `${pct}%`;
+    seg.style.backgroundColor = chartData.colors[i];
+    // titleはコンテナ側（timeline-tooltip-wrap）に駑せる
+    container.appendChild(seg);
+  });
+}
+
 // Initialize Bento Dashboard
 function initializeBento() {
   // Calculate A-Zen days (2021/9/11 〜 現在)
   const azenSpan = calculateSpan(2021, 9, 11);
   chartData.data[8] = azenSpan.totalDays; // A-Zenの日数を更新
-  
+
   // Update header stats
   const careerSpan = calculateSpan(1984, 4, 1);
-  
+
   // Update header days and years
   const headerDaysEl = document.getElementById('header-days');
   const headerYearsEl = document.getElementById('header-years');
@@ -172,30 +215,30 @@ function initializeBento() {
     headerDaysEl.textContent = careerSpan.totalDays.toLocaleString();
     headerYearsEl.textContent = `${careerSpan.years}年${careerSpan.months}ヶ月${careerSpan.days}日`;
   }
-  
+
   // Start Opening Sequence
   setupOpeningAnimation();
-  
+
   // Set current year in footer
   const yearSpan = document.getElementById('current-year');
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
   }
-  
+
   // Initialize modal
   const modal = document.getElementById('detail-modal');
   const modalClose = document.getElementById('modal-close');
   const modalBody = document.getElementById('modal-body');
-  
+
   // Card click handlers
   const cards = document.querySelectorAll('.bento-card');
   cards.forEach(card => {
     card.addEventListener('click', (e) => {
       e.preventDefault();
-      
+
       const type = card.dataset.type;
       const id = card.dataset.id;
-      
+
       if (type === 'chart') {
         const chartType = card.dataset.chart;
         openModalFor(() => showChartDetail(chartType));
@@ -212,26 +255,26 @@ function initializeBento() {
       }
     });
   });
-  
+
   // Close modal handlers
   if (modalClose && modal) {
     modalClose.addEventListener('click', () => {
       navigateBackModal();
     });
-    
+
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         navigateBackModal();
       }
     });
-    
+
     // ESC key to close
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modal.classList.contains('active')) {
         navigateBackModal();
       }
     });
-    
+
     // Swipe to close (Right swipe)
     let touchStartX = 0;
     let touchStartY = 0;
@@ -244,7 +287,7 @@ function initializeBento() {
     modal.addEventListener('touchend', (e) => {
       const touchEndX = e.changedTouches[0].screenX;
       const touchEndY = e.changedTouches[0].screenY;
-      
+
       const diffX = touchEndX - touchStartX;
       const diffY = touchEndY - touchStartY;
 
@@ -253,16 +296,16 @@ function initializeBento() {
       }
     }, { passive: true });
   }
-  
+
   // Initialize component list
   initializeComponentList();
-  
+
   // Initialize audio player
   initializeAudioPlayer();
-  
+
   // Initialize charts
   initializeCharts();
-  
+
   // Setup Mouse Spotlight Effect
   const grid = document.getElementById('bento-grid');
   if (grid) {
@@ -296,16 +339,28 @@ function showActivitiesDetail() {
 
   modalBody.innerHTML = `
     <h2>活動・興味・関心</h2>
-    <ul class="activities-list">
-      ${activities.map(item => `
-        <li class="activity-item" data-tooltip='${item.desc}'>
-          ・${item.text}
+    <ul class="activities-list accordion-list">
+      ${activities.map((item, i) => `
+        <li class="activity-item accordion-item" id="activity-${i}" onclick="toggleActivityItem(${i})">
+          <div class="accordion-header">
+            <span class="accordion-arrow" aria-hidden="true">&#9654;</span>
+            <span class="accordion-label">・${item.text}</span>
+          </div>
+          <div class="accordion-body" id="activity-body-${i}">
+            <p>${item.desc.replace(/\n/g, '<br>')}</p>
+          </div>
         </li>
       `).join('')}
     </ul>
-    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem;">※各項目にカーソルを合わせると詳細が表示されます。</p>
+    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem; opacity: 0.6;">※各項目をクリック・タップすると詳細が展開します。</p>
   `;
 }
+
+// 3-1: アコーディオンとぐる
+window.toggleActivityItem = function (index) {
+  const item = document.getElementById(`activity-${index}`);
+  item.classList.toggle('expanded');
+};
 
 // Show audio detail
 function showAudioDetail() {
@@ -456,7 +511,7 @@ function calculateYearsFromDays(days) {
   const years = Math.floor(days / 365);
   const remainingDays = days % 365;
   const months = Math.ceil(remainingDays / 30); // Round up to months
-  
+
   if (years === 0) {
     return `${months}ヶ月`;
   } else if (months === 0) {
@@ -470,11 +525,11 @@ function calculateYearsFromDays(days) {
 function showComponentDetail(index) {
   const modalBody = document.getElementById('modal-body');
   if (!modalBody) return;
-  
+
   const industry = chartData.labels[index];
   const color = chartData.colors[index];
   let period = chartData.periods[index];
-  
+
   // A-Zenの場合は現在日付を設定
   if (index === 8) {
     const currentDate = new Date();
@@ -483,23 +538,26 @@ function showComponentDetail(index) {
     const day = currentDate.getDate();
     period = `2021/9/11 〜 ${year}/${month}/${day}`;
   }
-  
+
   // Calculate current data including A-Zen
   const azenSpan = calculateSpan(2021, 9, 11);
   const currentData = [...chartData.data];
   currentData[8] = azenSpan.totalDays;
-  
+
   const days = currentData[index];
   const years = calculateYearsFromDays(days);
   const totalDays = currentData.reduce((sum, d) => sum + d, 0);
   const percentage = ((days / totalDays) * 100).toFixed(1);
-  
+
   const content = `
     <div class="component-detail">
-      <div class="detail-header" style="border-left: 4px solid ${color}; padding-left: 1rem;">
+      <button class="detail-back-btn" onclick="navigateBackModal()">
+        &#8592; 成分一覧へ戻る
+      </button>
+      <div class="detail-header" style="border-left: 4px solid ${color}; padding-left: 1rem; margin-top: 1rem;">
         <h2 style="color: ${color}; margin-bottom: 0.5rem; font-size: 1.5rem;">${industry}</h2>
         <p style="color: var(--text-primary); margin: 0; font-weight: 500; font-size: 1.1rem;">${period}</p>
-        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem;">
           <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: var(--radius-md); color: var(--text-primary); font-weight: 300;">${days.toLocaleString()}日</span>
           <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: var(--radius-md); color: ${color}; font-weight: 600;">${years}</span>
           <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: var(--radius-md); color: var(--accent-secondary); font-weight: 600;">${percentage}%</span>
@@ -511,7 +569,7 @@ function showComponentDetail(index) {
       </div>
     </div>
   `;
-  
+
   modalBody.innerHTML = content;
 }
 
@@ -577,7 +635,7 @@ function getIndustryDetail(industry) {
       <div style="color: var(--text-secondary); line-height: 1.6;">
         <p style="margin-bottom: 1rem;"><strong>カテナ（東京都江東区 : 現システナ）</strong></p>
         
-        <p style="margin-bottom: 1rem;"><strong>IBMBPとしてSOL営業展開</strong></p>
+        <p style="margin-bottom: 1rem;"><strong>IBM販売代理店として全国にITソリューションを展開</strong></p>
         
         <hr style="border: none; border-top: 1px solid var(--border-primary); margin: 1.5rem 0;">
         
@@ -690,7 +748,7 @@ function getIndustryDetail(industry) {
       </div>
     `
   };
-  
+
   return details[industry] || '<div style="color: var(--text-secondary); line-height: 1.6;"><p>詳細情報を準備中です。</p></div>';
 }
 
@@ -698,7 +756,7 @@ function getIndustryDetail(industry) {
 function showPhilosophyDetail() {
   const modalBody = document.getElementById('modal-body');
   if (!modalBody) return;
-  
+
   const content = `
     <div class="philosophy-detail">
       <div class="philosophy-header">
@@ -706,13 +764,14 @@ function showPhilosophyDetail() {
         <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; margin-top: 0; font-weight: 600; line-height: 1.2;">謙虚に真摯に</h3>
         <h3 style="color: var(--text-primary); margin-bottom: 2rem; margin-top: 0; font-weight: 600; line-height: 1.2;">常に新鮮であり続ける</h3>
         <h2 style="color: var(--text-primary); margin-bottom: 1rem; margin-top: 0; font-weight: 600; line-height: 1.2;">Like a California Roll</h2>
-        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
           カリフォルニアロールのような仕事をしてきました。<br>
           本道ではないが味がある、異なるアプローチでも同じ価値を創造する仕事です。
         </p>
-        <p style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 300; cursor: pointer;" onclick="togglePhilosophyFullText()">
-          （クリック／タップで全文を表示）
-        </p>
+        <button class="philosophy-expand-btn" id="philosophy-expand-btn" onclick="togglePhilosophyFullText()">
+          <span class="expand-btn-icon">&#9660;</span>
+          全文を読む
+        </button>
       </div>
       
       <div id="philosophy-full-text" style="display: none; margin-top: 2rem;">
@@ -764,15 +823,30 @@ function showPhilosophyDetail() {
       </div>
     </div>
   `;
-  
+
   modalBody.innerHTML = content;
 }
 
-// Toggle philosophy full text
+// 3-2: 哲学全文とぐる
 function togglePhilosophyFullText() {
   const fullText = document.getElementById('philosophy-full-text');
-  if (fullText) {
-    fullText.style.display = fullText.style.display === 'none' ? 'block' : 'none';
+  const btn = document.getElementById('philosophy-expand-btn');
+  if (!fullText) return;
+
+  const isExpanded = fullText.style.display !== 'none';
+  fullText.style.display = isExpanded ? 'none' : 'block';
+
+  if (btn) {
+    const icon = btn.querySelector('.expand-btn-icon');
+    if (isExpanded) {
+      if (icon) icon.textContent = '\u25BC';
+      btn.innerHTML = btn.innerHTML.replace(/閉じる/, '全文を読む');
+      btn.classList.remove('expanded');
+    } else {
+      if (icon) icon.innerHTML = '&#9650;';
+      btn.innerHTML = btn.innerHTML.replace(/全文を読む/, '閉じる');
+      btn.classList.add('expanded');
+    }
   }
 }
 
@@ -786,18 +860,18 @@ function playAudio(type) {
   const progressBar = document.getElementById('progress-bar');
   const progressFill = document.getElementById('progress-fill');
   const visualizer = document.querySelector('.audio-visualizer');
-  
+
   if (!fixedPlayer || !audioElement || !playerTitle || !playPauseBtn) return;
-  
+
   // 現在の音声を停止
   if (currentAudio && currentAudio !== audioElement) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-  
+
   let title = '';
   let audioSrc = '';
-  
+
   if (type === 'overview') {
     title = '聴く概要 『つくる』アーカイブ';
     audioSrc = 'audio/TSUKURU.mp3'; // 実際の音声ファイルパス
@@ -805,36 +879,40 @@ function playAudio(type) {
     title = 'AIディベート 「この 軌跡 は偶然か必然か？」';
     audioSrc = 'audio/debate.mp3'; // 実際の音声ファイルパス
   }
-  
+
   console.log(`音声ファイルパス: ${audioSrc}`);
   // プレーヤー情報を設定
   playerTitle.textContent = title;
   audioElement.src = audioSrc;
-  
+
   // プレーヤーを表示
   fixedPlayer.style.display = 'block';
-  
+
   // 既存の手動再生ボタンがあれば削除
   const existingBtn = fixedPlayer.querySelector('.manual-play-btn');
   if (existingBtn) {
     existingBtn.remove();
   }
-  
+
   // 音声の読み込みを待ってから再生
   audioElement.load();
-  
+
   // 音声読み込み完了後に再生を試行
   const attemptPlay = () => {
     audioElement.play().then(() => {
       playPauseBtn.textContent = '⏸';
       currentAudio = audioElement;
       console.log('音声再生開始');
-      
+
+      // 3-4: 音声再生中のカード発光エフェクト
+      const audioTile = document.querySelector('.audio-tile');
+      if (audioTile) audioTile.classList.add('is-playing');
+
       // ビジュアライザーを活性化
       if (visualizer) {
         visualizer.classList.add('playing');
       }
-      
+
       // 再生開始時にモーダルを閉じる
       _hideModal();
     }).catch(error => {
@@ -843,7 +921,7 @@ function playAudio(type) {
       if (playerTime) {
         playerTime.textContent = '再生エラー';
       }
-      
+
       // エラーメッセージを表示
       setTimeout(() => {
         if (audioElement.error) {
@@ -853,7 +931,7 @@ function playAudio(type) {
       }, 100);
     });
   };
-  
+
   // 少し遅延して再生を試行
   setTimeout(attemptPlay, 100);
 }
@@ -873,30 +951,34 @@ function initializeAudioPlayer() {
   const progressBar = document.getElementById('progress-bar');
   const progressFill = document.getElementById('progress-fill');
   const visualizer = document.querySelector('.audio-visualizer');
-  
+
   if (!audioElement || !playPauseBtn || !closePlayerBtn || !playerTime) return;
-  
+
   // 再生/一時停止ボタン
   playPauseBtn.addEventListener('click', () => {
     if (audioElement.paused) {
       audioElement.play();
-      if(visualizer) visualizer.classList.add('playing');
+      if (visualizer) visualizer.classList.add('playing');
       playPauseBtn.textContent = '⏸';
     } else {
       audioElement.pause();
-      if(visualizer) visualizer.classList.remove('playing');
+      if (visualizer) visualizer.classList.remove('playing');
       playPauseBtn.textContent = '▶';
     }
   });
-  
+
   // 閉じるボタン
   closePlayerBtn.addEventListener('click', () => {
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       currentAudio = null;
-      if(visualizer) visualizer.classList.remove('playing');
+      if (visualizer) visualizer.classList.remove('playing');
     }
+    // 3-4: カード発光解除
+    const audioTile = document.querySelector('.audio-tile');
+    if (audioTile) audioTile.classList.remove('is-playing');
+
     document.getElementById('fixed-audio-player').style.display = 'none';
     playPauseBtn.textContent = '▶';
     playerTime.textContent = '0:00';
@@ -904,7 +986,7 @@ function initializeAudioPlayer() {
       progressFill.style.width = '0%';
     }
   });
-  
+
   // プログレスバークリックでシーク
   if (progressBar) {
     progressBar.addEventListener('click', (e) => {
@@ -914,9 +996,9 @@ function initializeAudioPlayer() {
         const width = rect.width;
         const percentage = clickX / width;
         const newTime = percentage * audioElement.duration;
-        
+
         audioElement.currentTime = newTime;
-        
+
         // プログレスバーを即時更新
         if (progressFill) {
           progressFill.style.width = `${percentage * 100}%`;
@@ -924,20 +1006,20 @@ function initializeAudioPlayer() {
       }
     });
   }
-  
+
   // 時間更新
   audioElement.addEventListener('timeupdate', () => {
     const currentTime = audioElement.currentTime;
     const duration = audioElement.duration || 0;
-    
+
     if (duration) {
       const currentMinutes = Math.floor(currentTime / 60);
       const currentSeconds = Math.floor(currentTime % 60);
       const durationMinutes = Math.floor(duration / 60);
       const durationSeconds = Math.floor(duration % 60);
-      
+
       playerTime.textContent = `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')} / ${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`;
-      
+
       // プログレスバー更新
       if (progressFill) {
         const progress = (currentTime / duration) * 100;
@@ -949,17 +1031,20 @@ function initializeAudioPlayer() {
       playerTime.textContent = `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')}`;
     }
   });
-  
+
   // 再生終了
   audioElement.addEventListener('ended', () => {
     playPauseBtn.textContent = '▶';
-    if(visualizer) visualizer.classList.remove('playing');
+    if (visualizer) visualizer.classList.remove('playing');
+    // 3-4: 再生終了で発光解除
+    const audioTile = document.querySelector('.audio-tile');
+    if (audioTile) audioTile.classList.remove('is-playing');
     playerTime.textContent = '0:00';
     if (progressFill) {
       progressFill.style.width = '0%';
     }
   });
-  
+
   // 読み込みエラー
   audioElement.addEventListener('error', (e) => {
     console.log('音声読み込みエラー:', e);
@@ -969,7 +1054,7 @@ function initializeAudioPlayer() {
       progressFill.style.width = '0%';
     }
   });
-  
+
   // 音声読み込み完了
   audioElement.addEventListener('loadeddata', () => {
     console.log('音声データ読み込み完了');
@@ -979,7 +1064,7 @@ function initializeAudioPlayer() {
       console.log(`音声長さ: ${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`);
     }
   });
-  
+
   // 音声読み込み可能
   audioElement.addEventListener('canplay', () => {
     console.log('音声再生可能');
@@ -998,9 +1083,9 @@ function initializeAudioPlayer() {
 function showChartDetail(chartType) {
   const modalBody = document.getElementById('modal-body');
   if (!modalBody) return;
-  
+
   let content = '';
-  
+
   if (chartType === 'bar') {
     content = `
       <h2>成分（業種）別 日数</h2>
@@ -1009,10 +1094,10 @@ function showChartDetail(chartType) {
   } else if (chartType === 'pie') {
     content = `
       <h2>成分（業種）別 割合</h2>
-      <p>全期間を100％としたときの成分構成です。</p>
+      <p>各業種の割合</p>
     `;
   }
-  
+
   modalBody.innerHTML = content;
   createModalCharts(chartType);
 }
@@ -1023,32 +1108,32 @@ function createModalCharts(chartType) {
   const azenSpan = calculateSpan(2021, 9, 11);
   const currentData = [...chartData.data];
   currentData[8] = azenSpan.totalDays;
-  
+
   // Create sorted data for pie chart
   const sortedIndices = currentData
     .map((value, index) => ({ value, index }))
     .sort((a, b) => b.value - a.value)
     .map(item => item.index);
-  
+
   const sortedLabels = sortedIndices.map(i => chartData.labels[i]);
   const sortedData = sortedIndices.map(i => currentData[i]);
   const sortedColors = sortedIndices.map(i => chartData.colors[i]);
-  
+
   if (chartType === 'bar') {
     // Create bar chart container
     const chartContainer = document.createElement('div');
     chartContainer.className = 'modal-chart-container';
     chartContainer.style.height = '400px';
     chartContainer.style.margin = '1rem 0';
-    
+
     const canvas = document.createElement('canvas');
     canvas.id = 'modalBarChart';
     chartContainer.appendChild(canvas);
-    
+
     // Add to modal
     const modalBody = document.getElementById('modal-body');
     modalBody.appendChild(chartContainer);
-    
+
     // Create chart
     setTimeout(() => {
       modalBarChart = new Chart(canvas, {
@@ -1073,7 +1158,7 @@ function createModalCharts(chartType) {
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   return context.label + ': 経験日数 ' + context.parsed.x.toLocaleString() + '日';
                 }
               }
@@ -1110,22 +1195,22 @@ function createModalCharts(chartType) {
         }
       });
     }, 100);
-    
+
   } else if (chartType === 'pie') {
     // Create pie chart container
     const chartContainer = document.createElement('div');
     chartContainer.className = 'modal-chart-container';
     chartContainer.style.height = '400px';
     chartContainer.style.margin = '1rem 0';
-    
+
     const canvas = document.createElement('canvas');
     canvas.id = 'modalPieChart';
     chartContainer.appendChild(canvas);
-    
+
     // Add to modal
     const modalBody = document.getElementById('modal-body');
     modalBody.appendChild(chartContainer);
-    
+
     // Create chart
     setTimeout(() => {
       modalPieChart = new Chart(canvas, {
@@ -1155,8 +1240,14 @@ function createModalCharts(chartType) {
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
-                  return context.label + ': 経験日数 ' + context.parsed.toLocaleString() + '日';
+                label: function (context) {
+                  // モーダルも%表示に統一（日数タイルと割合タイルの一貫性）
+                  const total = context.chart.data.datasets[0].data
+                    .reduce(function (a, b) { return a + b; }, 0);
+                  const pct = total > 0
+                    ? ((context.parsed / total) * 100).toFixed(1)
+                    : '0.0';
+                  return context.label + ': ' + pct + '%';
                 }
               }
             }
@@ -1235,22 +1326,22 @@ function initializeCharts() {
     console.error('Chart.js is not loaded');
     return;
   }
-  
+
   // Calculate A-Zen days first
   const azenSpan = calculateSpan(2021, 9, 11);
   const currentData = [...chartData.data];
   currentData[8] = azenSpan.totalDays;
-  
+
   // Create sorted data for pie chart (descending order)
   const sortedIndices = currentData
     .map((value, index) => ({ value, index }))
     .sort((a, b) => b.value - a.value)
     .map(item => item.index);
-  
+
   const sortedLabels = sortedIndices.map(i => chartData.labels[i]);
   const sortedData = sortedIndices.map(i => currentData[i]);
   const sortedColors = sortedIndices.map(i => chartData.colors[i]);
-  
+
   // Bar Chart
   const barCtx = document.getElementById('barChart');
   if (barCtx) {
@@ -1271,13 +1362,20 @@ function initializeCharts() {
           indexAxis: 'y', // 横向き棒グラフ
           responsive: true,
           maintainAspectRatio: false,
+          clip: false, // H-1: ラベルのクリッピングを無効化
+          layout: {
+            padding: {
+              left: 0,
+              right: 10
+            }
+          },
           plugins: {
             legend: {
               display: false
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   return context.label + ': 経験日数 ' + context.parsed.x.toLocaleString() + '日';
                 }
               }
@@ -1298,9 +1396,30 @@ function initializeCharts() {
                 display: false
               },
               ticks: {
-                color: '#a0a0a0'
+                color: '#a0a0a0',
+                // H-1: ラベル幅を固定してテキストが切れないように
+                maxTicksLimit: 9,
+                callback: function (value, index) {
+                  const label = chartData.labels[index];
+                  // コンテナ幅に応じて短縮
+                  const maxLen = window.innerWidth < 800 ? 8 :
+                    window.innerWidth < 1000 ? 10 : 20;
+                  return label && label.length > maxLen
+                    ? label.substring(0, maxLen) + '…'
+                    : label;
+                }
               }
             }
+          },
+          // L-3: グラフクリックで業種詳細を開く
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              handleComponentRowClick(elements[0].index);
+            }
+          },
+          // グラフホバー時にカーソルを指マークに
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
           }
         }
       });
@@ -1310,7 +1429,7 @@ function initializeCharts() {
   } else {
     console.error('barChart canvas not found');
   }
-  
+
   // Pie Chart (sorted by days, clockwise)
   const pieCtx = document.getElementById('pieChart');
   if (pieCtx) {
@@ -1331,26 +1450,74 @@ function initializeCharts() {
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              position: 'right',
+              // H-1: 小画面では下部に切り替え、処理がないと切れる
+              position: window.innerWidth < 900 ? 'bottom' : 'right',
               labels: {
                 color: '#a0a0a0',
-                padding: 10,
+                padding: window.innerWidth < 900 ? 8 : 10,
                 font: {
-                  size: 11
+                  size: window.innerWidth < 900 ? 10 : 11
+                },
+                // H-1: 処理幅を超えるラベルは省略表示し、ツールチップで全文を見せる
+                generateLabels: function (chart) {
+                  const data = chart.data;
+                  if (data.labels.length && data.datasets.length) {
+                    const maxLen = window.innerWidth < 700 ? 7 :
+                      window.innerWidth < 900 ? 9 : 20;
+                    return data.labels.map(function (label, i) {
+                      const ds = data.datasets[0];
+                      const displayLabel = label.length > maxLen
+                        ? label.substring(0, maxLen) + '…'
+                        : label;
+                      return {
+                        text: displayLabel,
+                        fullText: label, // ツールチップ用
+                        fillStyle: ds.backgroundColor[i],
+                        strokeStyle: '#1a1a1a',
+                        lineWidth: ds.borderWidth || 2,
+                        fontColor: '#a0a0a0', // 凡例テキスト色を明示指定
+                        hidden: false,
+                        index: i
+                      };
+                    });
+                  }
+                  return [];
+                }
+              },
+              // H-1: ラベルクリックにツールチップを表示
+              onHover: function (event, legendItem, legend) {
+                if (legendItem && legendItem.fullText) {
+                  event.native.target.title = legendItem.fullText;
                 }
               }
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
-                  return context.label + ': 経験日数 ' + context.parsed.toLocaleString() + '日';
+                label: function (context) {
+                  // 割合タイル：日数ではなく割合（%）で表示
+                  const total = context.chart.data.datasets[0].data
+                    .reduce(function (a, b) { return a + b; }, 0);
+                  const pct = total > 0
+                    ? ((context.parsed / total) * 100).toFixed(1)
+                    : '0.0';
+                  return context.label + ': ' + pct + '%';
                 }
               }
             }
           },
-          // Start from top (12 o'clock) and go clockwise
           rotation: 0,
-          circumference: 360
+          circumference: 360,
+          // L-3: ドーナツグラフクリックで業種詳細を開く
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const originalIndex = sortedIndices[elements[0].index];
+              handleComponentRowClick(originalIndex);
+            }
+          },
+          // グラフホバー時にカーソルを指マークに
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+          }
         }
       });
     } catch (error) {
