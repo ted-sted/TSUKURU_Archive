@@ -240,6 +240,29 @@
     </div>
   </div>
 
+  <!-- AI Chat Window -->
+  <button id="ai-chat-btn" class="ai-chat-btn" aria-label="AIチャットを開く">
+    <span class="ai-chat-icon">✨</span>
+  </button>
+
+  <div id="ai-chat-window" class="ai-chat-window">
+    <div class="ai-chat-header">
+      <div class="ai-chat-title">
+        <span class="ai-chat-icon">✨</span> 『つくる』AIアシスタント
+      </div>
+      <button id="ai-chat-close" class="ai-chat-close">&times;</button>
+    </div>
+    <div class="ai-chat-body" id="ai-chat-body">
+      <div class="chat-message ai-message">
+        こんにちは！『つくる』の成分データ（経歴や得意なこと）や、あなたとの「相性」についてAIがお答えします。なんでも聞いてください。
+      </div>
+    </div>
+    <div class="ai-chat-footer">
+      <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="質問を入力..." />
+      <button id="ai-chat-send" class="ai-chat-send">送信</button>
+    </div>
+  </div>
+
   <script src="assets/js/bento.js"></script>
 </body>
 

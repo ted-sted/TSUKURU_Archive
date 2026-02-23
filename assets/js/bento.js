@@ -1594,6 +1594,12 @@ function renderQuizStep(step) {
 
   modalBody.innerHTML = `
     <div class="quiz-container">
+      ${step === 0 ? `
+      <div class="quiz-intro-box" style="margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1.5rem;">
+        <p style="margin:0 0 0.5rem; font-size:1.05rem; font-weight:600; color:var(--text-primary);">🔍 あなたとの成分相性を診断します</p>
+        <p style="margin:0; font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">いくつかの質問であなたの「成分」を分析し、私との相性を算出します。</p>
+      </div>
+      ` : ''}
       <div class="quiz-progress">
         ${Array.from({ length: total }, (_, i) =>
     `<div class="quiz-dot ${i < step ? 'done' : i === step ? 'active' : ''}"></div>`
@@ -1847,7 +1853,7 @@ function showTimeline() {
     <div class="tl-container">
       <div class="tl-header">
         <h2 class="tl-title">成分タイムライン</h2>
-        <p class="tl-subtitle">${startYear}年 〜 現在 ／ キャリアを時間軸で辿る</p>
+        <p class="tl-subtitle">${startYear}年 〜 現在 ／ 年表のスライダーを動かして、あの頃の社会と自分の歩みを振り返る</p>
       </div>
       <div class="tl-controls">
         <button class="tl-play-btn" id="tl-play-btn" onclick="toggleTimelinePlay()">▶ 再生</button>
@@ -2094,3 +2100,95 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeBento();
   }, 100);
 });
+
+
+// ============================================================
+// ④ 成分分析AIチャット機能
+// ============================================================
+
+const AI_WORKER_URL = "https://tsukuru-ai-chat.tsukuru-archive.workers.dev"; // ← 今回構築するCloudflare WorkerのURL
+
+const chatBtn = document.getElementById('ai-chat-btn');
+const chatWindow = document.getElementById('ai-chat-window');
+const chatClose = document.getElementById('ai-chat-close');
+const chatInput = document.getElementById('ai-chat-input');
+const chatSend = document.getElementById('ai-chat-send');
+const chatBody = document.getElementById('ai-chat-body');
+
+let chatHistory = [];
+
+if (chatBtn) {
+  chatBtn.addEventListener('click', () => {
+    chatWindow.classList.add('active');
+    setTimeout(() => chatInput.focus(), 100);
+  });
+}
+
+if (chatClose) {
+  chatClose.addEventListener('click', () => {
+    chatWindow.classList.remove('active');
+  });
+}
+
+if (chatSend) {
+  chatSend.addEventListener('click', handleChatSubmit);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleChatSubmit();
+  });
+}
+
+async function handleChatSubmit() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  // 1. ユーザーメッセージ追加
+  appendMessage('user', text);
+  chatInput.value = '';
+  chatHistory.push({ role: "user", parts: [{ text }] });
+
+  // 2. ローディングアニメーション追加
+  const loadingId = 'loading-' + Date.now();
+  chatBody.insertAdjacentHTML('beforeend', `
+    <div class="chat-loading" id="${loadingId}">
+      <span></span><span></span><span></span>
+    </div>
+  `);
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  try {
+    // 3. Cloudflare Worker にリクエスト送信
+    const response = await fetch(AI_WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: chatHistory })
+    });
+
+    if (!response.ok) throw new Error('API Error');
+
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "すみません、エラーが発生しました。";
+
+    // 4. 返信表示
+    document.getElementById(loadingId)?.remove();
+    appendMessage('ai', reply);
+    chatHistory.push({ role: "model", parts: [{ text: reply }] });
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById(loadingId)?.remove();
+    appendMessage('ai', "現在AIサーバーが準備中です！もうしばらくお待ちください🙇‍♂️");
+  }
+}
+
+function appendMessage(sender, text) {
+  const msgClass = sender === 'user' ? 'user-message' : 'ai-message';
+
+  // URLのような文字列があれば安全なリンクに変換する簡易処理
+  let formattedText = text.replace(/\n/g, '<br>');
+  formattedText = formattedText.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+
+  chatBody.insertAdjacentHTML('beforeend', `
+    <div class="chat-message ${msgClass}">${formattedText}</div>
+  `);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}

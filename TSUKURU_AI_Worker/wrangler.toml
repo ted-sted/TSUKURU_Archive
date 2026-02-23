@@ -1,0 +1,9 @@
+name = "tsukuru-ai-chat"
+main = "src/index.js"
+compatibility_date = "2024-02-23"
+
+# Node.js compatibility required for standard JS features if needed
+compatibility_flags = [ "nodejs_compat" ]
+
+# ここにAPIキーを直接書き込まないでください
+# デプロイ後に「npx wrangler secret put GEMINI_API_KEY」でセキュリティ領域に保存します
