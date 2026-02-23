@@ -344,7 +344,7 @@ function showActivitiesDetail() {
         <li class="activity-item accordion-item" id="activity-${i}" onclick="toggleActivityItem(${i})">
           <div class="accordion-header">
             <span class="accordion-arrow" aria-hidden="true">&#9654;</span>
-            <span class="accordion-label">・${item.text}</span>
+            <span class="accordion-label">${item.text}</span>
           </div>
           <div class="accordion-body" id="activity-body-${i}">
             <p>${item.desc.replace(/\n/g, '<br>')}</p>
@@ -2183,8 +2183,9 @@ async function handleChatSubmit() {
 function appendMessage(sender, text) {
   const msgClass = sender === 'user' ? 'user-message' : 'ai-message';
 
-  // URLのような文字列があれば安全なリンクに変換する簡易処理
-  let formattedText = text.replace(/\n/g, '<br>');
+  // URLのような文字列があれば安全なリンクに変換する簡易処理、およびMarkdownの不要な装飾（**）を削除
+  let formattedText = text.replace(/\*\*/g, '');
+  formattedText = formattedText.replace(/\n/g, '<br>');
   formattedText = formattedText.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
 
   chatBody.insertAdjacentHTML('beforeend', `
